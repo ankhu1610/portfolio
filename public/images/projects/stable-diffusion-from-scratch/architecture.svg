@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="100%" height="100%" fill="none" class="architecture-svg">
+  <defs>
+    <linearGradient id="diff-grad-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5EEAD4" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#5EEAD4" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="diff-grad-warm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5A97F" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#F5A97F" stop-opacity="0.05"/>
+    </linearGradient>
+    <marker id="d-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#5EEAD4"/>
+    </marker>
+    <marker id="d-arrow-warm" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#F5A97F"/>
+    </marker>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="960" height="520" rx="12" fill="#131417" stroke="#26282D" stroke-width="1.5"/>
+
+  <!-- Title / Spec Header -->
+  <text x="32" y="38" fill="#EDEDEF" font-family="monospace" font-size="14" font-weight="600" letter-spacing="1">SYSTEM: LATENT DIFFUSION ARCHITECTURE (DDIM SAMPLER + VAE + UNET)</text>
+  <text x="710" y="38" fill="#5EEAD4" font-family="monospace" font-size="12">COMPRESSION: 8x SPATIAL LATENT</text>
+
+  <!-- 1. Text Prompt & CLIP Encoder -->
+  <g transform="translate(40, 65)">
+    <rect width="250" height="90" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="14" y="24" fill="#F5A97F" font-family="monospace" font-size="11" font-weight="600">PROMPT CONDITIONING (c)</text>
+    <text x="14" y="44" fill="#EDEDEF" font-family="sans-serif" font-size="12">"A Cybernetic Robot in Rain"</text>
+    <rect x="14" y="54" width="220" height="24" rx="4" fill="#26282D"/>
+    <text x="22" y="70" fill="#F5A97F" font-family="monospace" font-size="10">CLIP ViT-L/14 &gt; [77, 768] Tokens</text>
+  </g>
+
+  <!-- 2. Time-step Sinusoidal Embedding -->
+  <g transform="translate(320, 65)">
+    <rect width="250" height="90" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="14" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">TIMESTEP EMBEDDING (t)</text>
+    <text x="14" y="44" fill="#EDEDEF" font-family="sans-serif" font-size="12">Sinusoidal Diffusion Step t</text>
+    <rect x="14" y="54" width="220" height="24" rx="4" fill="#26282D"/>
+    <text x="22" y="70" fill="#5EEAD4" font-family="monospace" font-size="10">MLP Projection &gt; [B, 1280] Vector</text>
+  </g>
+
+  <!-- 3. Latent Representation -->
+  <g transform="translate(600, 65)">
+    <rect width="320" height="90" rx="8" fill="#1B1D21" stroke="#5EEAD4" stroke-width="1.5"/>
+    <text x="16" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">LATENT NOISE / SEED (z_T)</text>
+    <text x="16" y="44" fill="#EDEDEF" font-family="sans-serif" font-size="12">Gaussian Noise ~ N(0, I)</text>
+    <rect x="16" y="54" width="288" height="24" rx="4" fill="#26282D"/>
+    <text x="24" y="70" fill="#5EEAD4" font-family="monospace" font-size="10">Latent Tensor: [B, 4, 64, 64] (48x less FLOPs)</text>
+  </g>
+
+  <!-- Main UNet Backbone Container -->
+  <rect x="40" y="180" width="880" height="225" rx="10" fill="url(#diff-grad-accent)" stroke="#5EEAD4" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="60" y="204" fill="#5EEAD4" font-family="monospace" font-size="12" font-weight="600">TIME-CONDITIONED U-NET NOISE PREDICTOR: eps_theta(z_t, t, c)</text>
+
+  <!-- UNet Stage 1: Downsampling -->
+  <g transform="translate(60, 220)">
+    <rect width="210" height="165" rx="6" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="12" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">Down-Sampling Blocks</text>
+    <text x="12" y="42" fill="#EDEDEF" font-family="sans-serif" font-size="11">ResNet + Time-Add</text>
+    <rect x="12" y="54" width="186" height="42" rx="4" fill="#26282D"/>
+    <text x="20" y="72" fill="#F5A97F" font-family="monospace" font-size="10">Spatial Transformer</text>
+    <text x="20" y="88" fill="#EDEDEF" font-family="sans-serif" font-size="10">Cross-Attention (Q:Latent, K/V:Text)</text>
+    <text x="12" y="116" fill="#9A9CA3" font-family="monospace" font-size="10">Res: 64x64 &gt; 32x32 &gt; 16x16</text>
+  </g>
+
+  <path d="M 270 300 L 305 300" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#d-arrow)"/>
+
+  <!-- UNet Stage 2: Bottleneck -->
+  <g transform="translate(315, 220)">
+    <rect width="200" height="165" rx="6" fill="#1B1D21" stroke="#5EEAD4" stroke-width="1.5"/>
+    <text x="12" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">UNet Bottleneck</text>
+    <text x="12" y="42" fill="#EDEDEF" font-family="sans-serif" font-size="11">ResNet + Self-Attention</text>
+    <rect x="12" y="54" width="176" height="42" rx="4" fill="#26282D"/>
+    <text x="18" y="72" fill="#F5A97F" font-family="monospace" font-size="10">Spatial Transformer</text>
+    <text x="18" y="88" fill="#EDEDEF" font-family="sans-serif" font-size="10">Deep Semantic Synthesis</text>
+    <text x="12" y="116" fill="#9A9CA3" font-family="monospace" font-size="10">Res: 8x8 · Ch: 1280</text>
+  </g>
+
+  <path d="M 515 300 L 550 300" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#d-arrow)"/>
+
+  <!-- UNet Stage 3: Upsampling & Skip Connections -->
+  <g transform="translate(560, 220)">
+    <rect width="210" height="165" rx="6" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="12" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">Up-Sampling Blocks</text>
+    <text x="12" y="42" fill="#EDEDEF" font-family="sans-serif" font-size="11">Concat Skips + ResNet</text>
+    <rect x="12" y="54" width="186" height="42" rx="4" fill="#26282D"/>
+    <text x="20" y="72" fill="#F5A97F" font-family="monospace" font-size="10">Spatial Transformer</text>
+    <text x="20" y="88" fill="#EDEDEF" font-family="sans-serif" font-size="10">Cross-Attention (Text + Features)</text>
+    <text x="12" y="116" fill="#9A9CA3" font-family="monospace" font-size="10">Res: 16x16 &gt; 32x32 &gt; 64x64</text>
+  </g>
+
+  <!-- UNet Stage 4: Guidance & DDIM Step -->
+  <g transform="translate(780, 220)">
+    <rect width="130" height="165" rx="6" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="10" y="24" fill="#F5A97F" font-family="monospace" font-size="10" font-weight="600">CFG Extrapolation</text>
+    <text x="10" y="44" fill="#EDEDEF" font-family="sans-serif" font-size="10">eps_uncond +</text>
+    <text x="10" y="58" fill="#5EEAD4" font-family="sans-serif" font-size="10">w * (eps_c - eps_u)</text>
+    <line x1="10" y1="70" x2="120" y2="70" stroke="#26282D"/>
+    <text x="10" y="90" fill="#5EEAD4" font-family="monospace" font-size="10" font-weight="600">DDIM Step</text>
+    <text x="10" y="108" fill="#EDEDEF" font-family="sans-serif" font-size="9">Deterministic ODE</text>
+    <text x="10" y="124" fill="#9A9CA3" font-family="sans-serif" font-size="9">50 fast steps</text>
+  </g>
+
+  <path d="M 770 300 L 780 300" stroke="#5EEAD4" stroke-width="1.5"/>
+
+  <!-- UNet Skip Connections -->
+  <path d="M 270 240 C 370 190, 460 190, 560 240" stroke="#F5A97F" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+  <text x="415" y="195" fill="#F5A97F" font-family="monospace" font-size="10">High-Res Skip Concat</text>
+
+  <!-- Conditioning Inputs Arrows -->
+  <path d="M 165 155 L 165 220" stroke="#F5A97F" stroke-width="1.5" marker-end="url(#d-arrow-warm)"/>
+  <path d="M 445 155 L 445 220" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#d-arrow)"/>
+  <path d="M 760 155 L 760 180" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#d-arrow)"/>
+
+  <!-- Flow 4: Final Latent to VAE Decoder (Pixel Reconstruction) -->
+  <g transform="translate(320, 425)">
+    <rect width="600" height="70" rx="8" fill="#1B1D21" stroke="#5EEAD4" stroke-width="1.5"/>
+    <text x="16" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">VAE DECODER (AUTOENCODER KL)</text>
+    <text x="16" y="44" fill="#EDEDEF" font-family="sans-serif" font-size="12">Latent z_0 [4, 64, 64] &gt; 8x Up-convolution &gt; High-Resolution RGB Image [3, 512, 512]</text>
+    <text x="16" y="60" fill="#9A9CA3" font-family="monospace" font-size="10">Zero-Shot FID: 12.4 on MS-COCO · Latency: 1.42s on RTX 4090</text>
+  </g>
+
+  <path d="M 845 385 L 845 425" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#d-arrow)"/>
+
+  <!-- Legend -->
+  <g transform="translate(40, 435)">
+    <rect width="250" height="60" rx="6" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+    <circle cx="16" cy="20" r="4" fill="#5EEAD4"/>
+    <text x="28" y="24" fill="#EDEDEF" font-family="sans-serif" font-size="11">Latent Tensor / Noise Flow</text>
+    <circle cx="16" cy="42" r="4" fill="#F5A97F"/>
+    <text x="28" y="46" fill="#EDEDEF" font-family="sans-serif" font-size="11">CLIP Conditioning &amp; Skips</text>
+  </g>
+</svg>

@@ -1,0 +1,35 @@
+export const siteConfig = {
+  name: "Ankit Chaubey",
+  title: "Ankit Chaubey — ML Systems Research Portfolio",
+  tagline: "Building ML systems from first principles — transformers, diffusion models, and the infrastructure underneath them.",
+  credibility: "M.Tech, Robotics & AI @ IIT Guwahati · Previously: cybersecurity engineering at Fiserv · 2 systems built from scratch",
+  currentFocus: {
+    text: "Exploring MoE routing efficiency and KV-cache compression in from-scratch transformers.",
+    date: "May 2026",
+    status: "active" as const,
+  },
+  author: {
+    name: "Ankit Chaubey",
+    email: "chaubeyankit837@gmail.com",
+    academicEmail: "ankit.chaubey@iitg.ac.in",
+    role: "ML Systems Researcher & Engineer",
+    location: "Guwahati / Bengaluru, India",
+    education: "M.Tech in Robotics & Artificial Intelligence, IIT Guwahati (2025–Present)",
+    prevRole: "Technology Analyst, Cybersecurity @ Fiserv (2024–2025)",
+  },
+  links: {
+    github: "https://github.com/ankitchaubey",
+    linkedin: "https://www.linkedin.com/in/ankit-chaubey-6b9a141b2/",
+    email: "mailto:chaubeyankit837@gmail.com",
+    academicEmail: "mailto:ankit.chaubey@iitg.ac.in",
+    resume: "/resume",
+    resumePdf: "/resume.pdf",
+  },
+  nav: [
+    { label: "Projects", href: "/projects" },
+    { label: "Lab", href: "/lab" },
+    { label: "About", href: "/about" },
+    { label: "Experience", href: "/experience" },
+    { label: "Resume", href: "/resume" },
+  ],
+};

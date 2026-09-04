@@ -4,16 +4,39 @@ import { Experiment, ExperimentSchema } from "@/content/schemas/experiment.schem
 import { Experience, ExperienceSchema } from "@/content/schemas/experience.schema";
 
 import { llmFromScratchProject } from "@/content/data/projects/llm-from-scratch";
+import { ragDoctorProject } from "@/content/data/projects/rag-doctor";
+import { nextSenseProject } from "@/content/data/projects/nextsense";
 import { stableDiffusionProject } from "@/content/data/projects/stable-diffusion-from-scratch";
+import { productStudioProject } from "@/content/data/projects/product-studio-ai";
+import { hinglishLmProject } from "@/content/data/projects/hinglish-lm";
+
 import { kvCacheNote } from "@/content/data/notes/kv-cache-memory-tradeoffs";
 import { cfgScaleNote } from "@/content/data/notes/cfg-scale-vs-diversity";
+
 import { sftVsRlhfExperiment } from "@/content/data/experiments/sft-vs-rlhf-convergence";
+import { ragFailureDiagnosisExperiment } from "@/content/data/experiments/rag-failure-mode-diagnosis";
+import { loraHotSwapExperiment } from "@/content/data/experiments/lora-hot-swap-latency";
+
 import { experiencesData } from "@/content/data/experience/timeline";
 
-// Raw lists
-const rawProjects: Project[] = [llmFromScratchProject, stableDiffusionProject];
+// Canonical raw content registries
+const rawProjects: Project[] = [
+  llmFromScratchProject,
+  ragDoctorProject,
+  nextSenseProject,
+  stableDiffusionProject,
+  productStudioProject,
+  hinglishLmProject,
+];
+
 const rawNotes: Note[] = [kvCacheNote, cfgScaleNote];
-const rawExperiments: Experiment[] = [sftVsRlhfExperiment];
+
+const rawExperiments: Experiment[] = [
+  sftVsRlhfExperiment,
+  ragFailureDiagnosisExperiment,
+  loraHotSwapExperiment,
+];
+
 const rawExperiences: Experience[] = experiencesData;
 
 // Validate all content at module evaluation time with Zod

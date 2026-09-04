@@ -27,19 +27,19 @@ export function ChallengeCard({
     switch (status) {
       case "resolved":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-sm border border-emerald-400/20">
+          <span className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-400/10 px-2 py-0.5 rounded-sm border border-emerald-500/30 dark:border-emerald-400/20">
             <CheckCircle2 className="w-3 h-3" /> Resolved
           </span>
         );
       case "in-progress":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-mono text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-sm border border-amber-400/20">
+          <span className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-amber-800 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-400/10 px-2 py-0.5 rounded-sm border border-amber-500/30 dark:border-amber-400/20">
             <Clock className="w-3 h-3" /> In Progress
           </span>
         );
       case "mitigated":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-mono text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded-sm border border-cyan-400/20">
+          <span className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-cyan-800 dark:text-cyan-400 bg-cyan-500/10 dark:bg-cyan-400/10 px-2 py-0.5 rounded-sm border border-cyan-500/30 dark:border-cyan-400/20">
             <AlertCircle className="w-3 h-3" /> Mitigated
           </span>
         );

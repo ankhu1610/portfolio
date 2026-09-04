@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Project } from "@/content/schemas/project.schema";
 import { StatusDot } from "@/components/ui/StatusDot";
 import { TechBadge } from "@/components/ui/TechBadge";
-import { ArrowRight, Github } from "lucide-react";
+import { ArrowRight, Github, HelpCircle, GitBranch } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ProjectCardProps {
@@ -24,8 +24,8 @@ export function ProjectCard({
   return (
     <div
       className={cn(
-        "group relative rounded-md bg-surface border border-border-subtle hover:border-accent/60 transition-all duration-fast flex flex-col justify-between overflow-hidden",
-        isFlagship ? "p-6" : "p-4",
+        "group relative rounded-lg bg-surface border border-border-subtle hover:border-accent/60 transition-all duration-fast flex flex-col justify-between overflow-hidden",
+        isFlagship ? "p-6 sm:p-7" : "p-4 sm:p-5",
         className
       )}
     >
@@ -33,7 +33,10 @@ export function ProjectCard({
         {/* Top Metadata Bar */}
         <div className="flex items-center justify-between gap-3 mb-3">
           <div className="flex items-center gap-2">
-            <StatusDot status={project.status} />
+            <StatusDot
+              status={project.status}
+              verificationStatus={project.verificationStatus}
+            />
             <span className="text-xs font-mono text-text-secondary uppercase">
               {project.domain}
             </span>
@@ -46,7 +49,7 @@ export function ProjectCard({
         {/* Title */}
         <h3
           className={cn(
-            "font-display font-semibold text-text-primary group-hover:text-accent transition-colors",
+            "font-display font-bold text-text-primary group-hover:text-accent transition-colors",
             isFlagship ? "text-xl lg:text-2xl mb-2" : "text-lg mb-1.5"
           )}
         >
@@ -57,13 +60,26 @@ export function ProjectCard({
         </h3>
 
         {/* Summary */}
-        <p className="text-sm text-text-secondary leading-relaxed mb-4">
+        <p className="text-sm text-text-secondary leading-relaxed mb-3">
           {project.summary}
         </p>
 
+        {/* Research Question Callout */}
+        {project.researchQuestion && (
+          <div className="mb-4 p-2.5 rounded bg-surface-raised border-l-2 border-l-accent border-y border-r border-border-subtle/80 text-xs font-mono">
+            <div className="flex items-center gap-1.5 text-accent text-[11px] font-semibold uppercase tracking-wider mb-1">
+              <HelpCircle className="w-3 h-3" />
+              <span>Research Question</span>
+            </div>
+            <p className="text-text-primary line-clamp-2 italic text-[11.5px] font-medium leading-relaxed">
+              &gt; {project.researchQuestion}
+            </p>
+          </div>
+        )}
+
         {/* Mini Architecture Feature Highlight (for flagship) */}
         {isFlagship && project.architecture.components && (
-          <div className="mb-4 p-3 rounded-sm bg-surface-raised border border-border-subtle/70">
+          <div className="mb-4 p-3 rounded-md bg-surface-raised/60 border border-border-subtle/70">
             <div className="text-[11px] font-mono text-accent uppercase tracking-wider mb-1.5 flex items-center justify-between">
               <span>Core System Architecture</span>
               <span className="text-text-secondary font-normal">From Scratch</span>
@@ -72,7 +88,7 @@ export function ProjectCard({
               {project.architecture.components.slice(0, 3).map((comp, idx) => (
                 <span
                   key={idx}
-                  className="font-mono text-[11px] px-1.5 py-0.5 rounded-sm bg-base border border-border-subtle text-text-primary/90"
+                  className="font-mono text-[11px] px-2 py-0.5 rounded-sm bg-base border border-border-subtle text-text-primary/90"
                 >
                   {comp.name}
                 </span>
@@ -82,17 +98,22 @@ export function ProjectCard({
         )}
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-6">
-          {project.tags.map((tag) => (
+        <div className="flex flex-wrap gap-1.5 mb-5">
+          {project.tags.slice(0, 4).map((tag) => (
             <TechBadge key={tag} label={tag} variant="outline" />
           ))}
+          {project.tags.length > 4 && (
+            <span className="text-[10px] font-mono text-text-secondary self-center">
+              +{project.tags.length - 4} more
+            </span>
+          )}
         </div>
       </div>
 
       {/* Bottom Footer Action */}
-      <div className="flex items-center justify-between pt-3 border-t border-border-subtle/50 text-xs font-mono">
-        <span className="text-text-secondary group-hover:text-text-primary transition-colors flex items-center gap-1">
-          Read Case Study <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+      <div className="flex items-center justify-between pt-3 border-t border-border-subtle/60 text-xs font-mono">
+        <span className="text-accent group-hover:text-accent transition-colors flex items-center gap-1 font-semibold">
+          Explore Case Study <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
         </span>
 
         {project.links.github && (

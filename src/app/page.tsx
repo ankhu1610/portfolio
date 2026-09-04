@@ -1,14 +1,17 @@
 import React from "react";
 import Link from "next/link";
 import { siteConfig } from "@/content/site.config";
-import { getFeaturedProjects, getAllNotes, getAllExperiences } from "@/lib/content-api";
+import { getFeaturedProjects, getAllProjects, getAllNotes, getAllExperiences } from "@/lib/content-api";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { NoteCard } from "@/components/lab/NoteCard";
 import { Timeline } from "@/components/ui/Timeline";
-import { ArrowRight, Terminal, Cpu, ShieldCheck, Download, Sparkles, BookOpen } from "lucide-react";
+import { ArrowRight, Terminal, Cpu, ShieldCheck, Download, Sparkles, BookOpen, Activity, GitBranch } from "lucide-react";
+
+import { TypewriterHeading } from "@/components/ui/TypewriterHeading";
 
 export default function HomePage() {
   const featuredProjects = getFeaturedProjects();
+  const allProjects = getAllProjects();
   const recentNotes = getAllNotes().slice(0, 3);
   const experiences = getAllExperiences();
 
@@ -21,15 +24,21 @@ export default function HomePage() {
           <span>ML Systems Researcher &amp; Engineer</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-text-primary tracking-tight leading-[1.1]">
-          Building ML systems{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-teal-300">
-            from first principles.
-          </span>
-        </h1>
+        <TypewriterHeading
+          as="h1"
+          className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-text-primary tracking-tight leading-[1.1]"
+          segments={[
+            { text: "Building ML systems " },
+            {
+              text: "from first principles.",
+              className: "text-transparent bg-clip-text bg-gradient-to-r from-accent to-teal-300",
+            },
+          ]}
+          speed={32}
+        />
 
         <p className="text-lg sm:text-xl text-text-secondary leading-relaxed max-w-3xl">
-          Transformers, diffusion models, and the low-level infrastructure underneath them. Not framework glue code.
+          Transformers, diffusion models, and the low-level infrastructure underneath them. An evidence-backed research lab grounded in hardware constraints and empirical telemetry.
         </p>
 
         {/* Credibility Strip */}
@@ -38,7 +47,7 @@ export default function HomePage() {
           <span className="text-border-subtle">·</span>
           <span>ex-Cybersecurity, Fiserv</span>
           <span className="text-border-subtle">·</span>
-          <span className="text-accent">2 Core Systems Built From Scratch</span>
+          <span className="text-accent">Systems Built &amp; Evaluated From Scratch</span>
         </div>
 
         {/* Primary & Secondary CTAs */}
@@ -47,16 +56,24 @@ export default function HomePage() {
             href="/projects"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-accent text-neutral-950 font-mono text-sm font-semibold hover:bg-teal-300 transition-colors shadow-sm"
           >
-            <span>View Projects</span>
+            <span>Explore Projects ({allProjects.length})</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
 
           <Link
-            href="/resume"
+            href="/lab"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-surface-raised hover:bg-surface border border-border-subtle hover:border-accent text-text-primary font-mono text-sm transition-colors"
           >
-            <Download className="w-4 h-4 text-text-secondary" />
-            <span>Download Resume</span>
+            <Activity className="w-4 h-4 text-accent" />
+            <span>Enter Research Lab</span>
+          </Link>
+
+          <Link
+            href="/resume"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-text-secondary hover:text-text-primary font-mono text-sm transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            <span>Resume</span>
           </Link>
         </div>
       </section>
@@ -83,27 +100,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. SELECTED WORK (Flagship Projects) */}
+      {/* 3. SELECTED WORK (Prioritized Flagship Projects) */}
       <section className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-3 border-b border-border-subtle">
           <div>
             <span className="text-xs font-mono text-accent uppercase tracking-wider block mb-1">
-              SYSTEMS &amp; ARCHITECTURES
+              ACTIVE SYSTEMS INVESTIGATION // FLAGSHIPS
             </span>
             <h2 className="text-2xl sm:text-3xl font-display font-bold text-text-primary">
-              Selected Flagship Work
+              Core Research Systems
             </h2>
           </div>
           <Link
             href="/projects"
             className="text-xs font-mono text-text-secondary hover:text-accent flex items-center gap-1 transition-colors"
           >
-            <span>Browse all projects ({featuredProjects.length})</span>
+            <span>Browse complete portfolio ({allProjects.length} projects)</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 3 Flagship Projects Hierarchy: LLM Systems, Evaluation / Applied ML, Sequential RecSys */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {featuredProjects.map((project) => (
             <ProjectCard key={project.slug} project={project} variant="flagship" />
           ))}
@@ -168,7 +186,7 @@ export default function HomePage() {
           Interested in First-Principles ML Systems?
         </h3>
         <p className="text-sm text-text-secondary max-w-xl mx-auto leading-relaxed">
-          Open to discussions on ML systems research, transformer efficiency, diffusion architectures, and infrastructure roles.
+          Open to technical discussions on transformer efficiency, diffusion architectures, retrieval diagnostics, and machine learning infrastructure engineering.
         </p>
         <div className="flex flex-wrap justify-center gap-3 pt-2">
           <a

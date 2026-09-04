@@ -32,5 +32,5 @@ $$\\text{Memory} = 4 \\times 32 \\times 32 \\times 128 \\times 4096 \\times 16 \
     "Grouped Query Attention (GQA) reduces KV-cache memory pressure by a factor equal to $H_q / H_{kv}$ without requiring non-contiguous memory management.",
     "PagedAttention enables 2.4x higher serving concurrency on memory-constrained single-GPU nodes.",
   ],
-  mathOrCodeFormula: "KV_{bytes} = 4 \\cdot L \\cdot H_{kv} \\cdot d \\cdot S \\cdot B",
+  mathOrCodeFormula: "\\text{KV}_{\\text{bytes}} = 4 \\cdot L \\cdot H_{kv} \\cdot d \\cdot S \\cdot B",
 };

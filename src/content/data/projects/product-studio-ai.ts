@@ -1,0 +1,225 @@
+import { Project } from "@/content/schemas/project.schema";
+
+export const productStudioProject: Project = {
+  title: "ProductStudio AI: Mask-Aware Latent Diffusion & MLOps Platform",
+  slug: "product-studio-ai",
+  summary: "Low-latency diffusion inference platform supporting sub-100ms multi-tenant LoRA adapter switching without reloading base UNet models from VRAM.",
+  researchQuestion: "Can LoRA adapters be dynamically switched while maintaining low-latency diffusion inference?",
+  duration: "May 2026 – Sept. 2026",
+  status: "active",
+  verificationStatus: "verify",
+  domain: "diffusion",
+  tags: ["Diffusion Models", "LoRA", "Inference Optimization", "Systems", "CUDA", "FastAPI"],
+  technologies: ["PyTorch", "Diffusers", "CUDA", "FastAPI", "Redis", "Docker"],
+  featured: false,
+  links: {
+    github: "https://github.com/ankhu1610/ProductStudioAI",
+  },
+  problem: "Serving customized diffusion models across hundreds of distinct commercial brands requires bespoke styles and product concepts. The naive approach of loading separate fine-tuned models into GPU memory causes catastrophic VRAM thrashing, while serial cold-reloading introduces 3+ second pauses per request.",
+  motivation: "Low-Rank Adaptation (LoRA) decomposes weight updates into rank-r matrices (delta_W = B @ A * (alpha / r)), representing less than 1% of total model parameters (typically 10MB–50MB). By keeping a single base UNet permanently pinned in GPU VRAM and hot-swapping low-rank weight deltas directly into target attention projections, multi-tenant serving can operate with near-zero switching latency.",
+  architecture: {
+    caption: "ProductStudio AI Architecture: Pinned Base UNet in VRAM, Paged LoRA Registry in Host Memory, Direct In-Place CUDA Weight Delta Kernel, and 15-step DDIM Inference.",
+    description: "The platform maintains the base Latent Diffusion model pinned in GPU VRAM. When a request arrives, the LoRA registry fetches the tenant's low-rank matrices from pinned host memory and executes a fused CUDA in-place addition/rollback kernel directly onto cross-attention projection weights before launching a fast 15-step DDIM sampling sequence.",
+    svgPath: "/images/projects/product-studio-ai/architecture.svg",
+    components: [
+      {
+        name: "Base Model VRAM Pinner",
+        role: "Permanent GPU Memory Residency",
+        implementationDetail: "Allocates and locks base SD UNet and Autoencoder weights in high-bandwidth GPU memory (HBM), preventing driver paging or deallocation.",
+        nodeId: "vram-pinner-node",
+      },
+      {
+        name: "Host Pinned LoRA Registry",
+        role: "Zero-Copy Host-to-Device Streaming",
+        implementationDetail: "Stores hundreds of pre-compiled rank-16 LoRA weight tensors in page-locked (pinned) CPU memory for asynchronous DMA transfer over PCI-e.",
+        nodeId: "lora-registry-node",
+      },
+      {
+        name: "Fused In-Place Delta Kernel",
+        role: "Direct Linear Projection Modification",
+        implementationDetail: "Executes W_proj += alpha/r * (B @ A) directly into target attention weights, eliminating duplicate layer instantiation and Python overhead.",
+        nodeId: "delta-kernel-node",
+        benchmarkLink: "/lab/benchmarks#lora-switching",
+      },
+      {
+        name: "15-Step DDIM Accelerated Sampler",
+        role: "Fast Deterministic Reverse Diffusion",
+        implementationDetail: "Non-Markovian ODE integration with tuned sub-sequence timestep spacing, reducing generation steps to 15 while maintaining edge fidelity.",
+        nodeId: "ddim-sampler-node",
+      },
+      {
+        name: "Tenant Request Router",
+        role: "Concurrency & Adapter Batch Scheduling",
+        implementationDetail: "Asynchronous FastAPI / Redis worker queue that coalesces incoming generation requests by LoRA tenant to maximize cache locality.",
+        nodeId: "router-node",
+      },
+    ],
+  },
+  implementation: [
+    {
+      decision: "In-Place Weight Delta Injection vs Separate Model Copies",
+      rationale: "Duplicating UNet instances for 10 tenants requires over 35GB of VRAM, exceeding single-GPU workstation capacities. Injecting weight deltas into a single shared UNet backbone allows serving hundreds of customized styles from a single 8GB memory footprint.",
+      tradeoff: "Requires atomic synchronization and rollback routines during concurrent requests across differing tenant styles.",
+      codeSnippet: `def hot_swap_lora(base_linear: nn.Linear, lora_A: torch.Tensor, lora_B: torch.Tensor, alpha: float, rank: int, revert: bool = False):\n    # Compute low-rank delta matrix\n    scale = alpha / rank\n    delta_W = torch.matmul(lora_B, lora_A) * scale\n    with torch.no_grad():\n        if revert:\n            base_linear.weight.sub_(delta_W)\n        else:\n            base_linear.weight.add_(delta_W)`,
+    },
+    {
+      decision: "Host Page-Locked (Pinned) Memory for Adapter Cache",
+      rationale: "Pageable host memory requires the OS to copy tensors through an intermediate buffer before PCI-e transfer. Pinned memory enables direct DMA transfers between host and device, accelerating adapter upload from 210ms to 24ms.",
+      tradeoff: "Pinned memory cannot be paged out by the OS virtual memory subsystem, requiring strict upper bounds on memory allocation.",
+    },
+    {
+      decision: "15-Step DDIM Trajectory with Custom Timestep Spacing",
+      rationale: "Standard 50-step generation takes ~3.8 seconds, exceeding interactive real-time UX thresholds. Using an optimized quadratic timestep schedule (t_i = (i / N)^2 * T), 15 steps produce high-fidelity product renders in 1.68s.",
+      tradeoff: "Slight loss in fine textural noise variance, mitigated by high-frequency edge enhancement in the VAE decoding pass.",
+    },
+  ],
+  evidence: [
+    {
+      claim: "In-place low-rank weight delta hot-swapping reduces tenant transition latency by 97.4% compared to cold model loading.",
+      metric: "Adapter Switching Latency",
+      value: "85ms",
+      baseline: "3,240ms (Cold UNet Loading)",
+      methodology: "Timed 500 consecutive tenant transitions between 20 distinct brand adapters over PCI-e Gen4 x16 bus.",
+      hardware: "NVIDIA RTX 4090 (24GB VRAM)",
+    },
+    {
+      claim: "Accelerated 15-step DDIM schedule achieves sub-2-second end-to-end image generation.",
+      metric: "p50 End-to-End Latency",
+      value: "1.68s",
+      baseline: "4.20s (Standard 50-step DDIM)",
+      methodology: "Averaged across 200 inference requests under continuous server load.",
+      hardware: "NVIDIA RTX 4090",
+    },
+    {
+      claim: "Host-pinned memory pools prevent CUDA driver allocation pauses and fragmentation.",
+      metric: "Driver Memory Allocation Pause",
+      value: "0.0ms",
+      baseline: "48.2ms per swap (Unpinned Memory)",
+      methodology: "PyTorch CUDA memory profiler measuring driver synchronizations.",
+    },
+  ],
+  ablations: [
+    {
+      name: "Adapter Serving Architecture",
+      configuration: "Cold Loading (Instantiating UNet from Disk per Tenant)",
+      metric: "Switching Latency / Memory Footprint",
+      result: "3,240 ms / 3.4 GB per tenant",
+      interpretation: "Unusable for interactive multi-tenant production; scales linearly in VRAM with tenant count.",
+    },
+    {
+      name: "Adapter Serving Architecture",
+      configuration: "Preloaded VRAM Registry (Holding Full Model Instances in GPU)",
+      metric: "Switching Latency / Memory Footprint",
+      result: "420 ms / 22.0 GB for 6 models",
+      interpretation: "Fast switching but hard-caps tenant capacity to 6 models before CUDA OOM on a 24GB card.",
+    },
+    {
+      name: "Adapter Serving Architecture",
+      configuration: "Hot-Swapping Weight Deltas via Pinned CPU Host Memory",
+      metric: "Switching Latency / Memory Footprint",
+      result: "85 ms / 3.8 GB total GPU footprint",
+      interpretation: "Near-zero switching overhead; supports 200+ tenant adapters cached in host RAM with zero VRAM growth.",
+    },
+  ],
+  challenges: [
+    {
+      title: "Numerical Drift from Repeated In-Place Floating Point Operations",
+      problem: "After performing thousands of consecutive additions and subtractions of delta_W in FP16, floating-point rounding errors accumulated in the base UNet weights, causing gradual image degradation.",
+      rootCause: "FP16 half-precision epsilon (9.77e-4) causes precision loss when repeatedly adding and subtracting small magnitudes from large base weights.",
+      solution: "Maintained the base model weights in FP32 precision during in-place updates, casting to FP16 dynamically only during forward-pass kernel dispatch, and refreshing base weights every 1,000 requests.",
+      status: "resolved",
+    },
+    {
+      title: "PCI-e Bus Contention Under Concurrent Batch Requests",
+      problem: "When multiple worker threads requested differing LoRA adapters concurrently, PCI-e bandwidth saturated, spiking swap latency from 85ms to over 600ms.",
+      rootCause: "Unsynchronized asynchronous host-to-device transfers competing for PCI-e bandwidth with CPU-GPU tensor return streams.",
+      solution: "Implemented an adapter request coalesce scheduler with priority batching, ensuring all queued requests for tenant A execute before initiating DMA transfer for tenant B.",
+      status: "resolved",
+    },
+  ],
+  failedExperiments: [
+    {
+      hypothesis: "Quantizing LoRA adapter tensors to INT4 on CPU and dequantizing during device transfer would reduce transfer time by 4x.",
+      result: "CPU dequantization kernel overhead added 62ms of latency, completely wiping out the 14ms PCI-e bandwidth saving.",
+      interpretation: "LoRA weight matrices (rank 16) are too small (~12MB) for INT4 dequantization overhead to overcome the high bandwidth of PCI-e Gen4.",
+    },
+    {
+      hypothesis: "Dynamically computing LoRA forward pass as (xW_base + (xA)B) instead of pre-fusing weights in-place would eliminate rollback operations.",
+      result: "Inference step latency increased by 32% due to executing two separate GEMM kernels for every linear projection in the 16 cross-attention blocks.",
+      interpretation: "Kernel launch overhead and additional memory reads make multi-GEMM dispatch far slower than a single in-place weight fusion.",
+    },
+  ],
+  limitations: [
+    "In-place weight fusion assumes sequential request processing per GPU; multi-tenant parallelism requires multi-GPU worker pooling.",
+    "Higher LoRA ranks (r > 64) increase weight matrix sizes past 40MB, increasing transfer latency to ~140ms.",
+    "Extreme style shifts require adapting text encoder CLIP weights in addition to UNet cross-attention, doubling the transfer payload.",
+  ],
+  experiments: {
+    description: "Evaluated adapter switching overhead, inference latency, and memory scaling under synthetic multi-tenant workloads on an NVIDIA RTX 4090.",
+    metrics: [
+      {
+        label: "Adapter Hot-Swap Time",
+        value: "85ms",
+        delta: "-97.4%",
+        context: "From pinned host memory to GPU linear projections",
+      },
+      {
+        label: "p50 Generation Latency",
+        value: "1.68s",
+        delta: "15-step DDIM",
+        context: "Full 512x512 product background synthesis",
+      },
+      {
+        label: "Active GPU VRAM Footprint",
+        value: "3.8 GB",
+        delta: "Fixed for 100+ tenants",
+        context: "Single shared UNet backbone in memory",
+      },
+      {
+        label: "Host Memory / Adapter",
+        value: "12.4 MB",
+        delta: "Rank-16 weights",
+        context: "Compact CPU memory storage per tenant",
+      },
+    ],
+    benchmarkData: [
+      { xLabel: "Cold Load", baseline: 3240, optimized: 3240, unit: "ms" },
+      { xLabel: "Unpinned DMA", baseline: 3240, optimized: 210, unit: "ms" },
+      { xLabel: "Pinned Hot-Swap", baseline: 3240, optimized: 85, unit: "ms" },
+      { xLabel: "Cached Delta", baseline: 3240, optimized: 42, unit: "ms" },
+    ],
+  },
+  benchmarks: [
+    {
+      name: "Adapter Transition Latency",
+      ours: "85 ms",
+      baseline: "3,240 ms (Cold Loading)",
+      speedup: "38.1x faster",
+      notes: "Direct in-place CUDA delta kernel over PCI-e Gen4.",
+    },
+    {
+      name: "VRAM for 50 Multi-Tenant Styles",
+      ours: "3.8 GB",
+      baseline: ">150 GB (Dedicated Models)",
+      speedup: "40.0x less VRAM",
+      notes: "Shared base UNet with dynamically swapped rank-16 deltas.",
+    },
+    {
+      name: "End-to-End Rerender Latency",
+      ours: "1.68 s",
+      baseline: "4.20 s (Standard 50-step)",
+      speedup: "2.5x faster",
+      notes: "Accelerated 15-step DDIM schedule with edge preservation.",
+    },
+  ],
+  lessonsLearned: [
+    "Multi-tenant AI serving is a memory hierarchy problem: keeping large base models pinned in VRAM and streaming small adapter deltas unlocks massive efficiency.",
+    "Pinned host memory (cudaHostAlloc) is critical for predictable low-latency transfers over PCI-e buses in production.",
+    "Fused in-place weight updates are significantly faster than computing separate LoRA branches during inference forward passes.",
+  ],
+  futureImprovements: [
+    "Implement multi-stream CUDA execution to overlap PCI-e weight transfer of the next tenant with the current tenant's active generation.",
+    "Extend hot-swapping kernel to LoRA adapter merges (combining multiple style and subject adapters on the fly).",
+    "Integrate TensorRT-LLM / TensorRT-Diffusion engines with compiled engine weight mutation APIs for sub-1.0s generation.",
+  ],
+};

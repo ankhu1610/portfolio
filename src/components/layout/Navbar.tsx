@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/content/site.config";
 import { useTheme } from "./ThemeProvider";
-import { Moon, Sun, Menu, X, FileText, Terminal } from "lucide-react";
+import { Moon, Sun, Menu, X, FileText, Terminal, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -30,7 +30,7 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full transition-all duration-fast border-b",
+        "sticky top-0 z-40 w-full transition-all duration-fast border-b print:hidden",
         isScrolled
           ? "bg-base/85 backdrop-blur-md border-border-subtle shadow-sm"
           : "bg-base/60 backdrop-blur-sm border-transparent"
@@ -75,8 +75,20 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* Right Actions: Theme Toggle & Resume CTA */}
+        {/* Right Actions: Search Cmd+K, Theme Toggle & Resume CTA */}
         <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))}
+            className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-xs font-mono text-text-secondary hover:text-text-primary hover:bg-surface-raised border border-border-subtle transition-colors"
+            aria-label="Search portfolio artifacts"
+          >
+            <Search className="w-3.5 h-3.5 text-accent" />
+            <span className="text-[11px]">Search</span>
+            <kbd className="px-1.5 py-0.2 rounded bg-surface border border-border-subtle text-[10px] text-text-secondary">
+              ⌘K
+            </kbd>
+          </button>
+
           <button
             onClick={toggleTheme}
             className="p-2 rounded-sm text-text-secondary hover:text-text-primary hover:bg-surface-raised border border-border-subtle transition-colors"

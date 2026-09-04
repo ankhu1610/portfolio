@@ -38,13 +38,15 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.tagline,
-    creator: "@ankitchaubey",
+    creator: "@ankhu1610",
   },
   robots: {
     index: true,
     follow: true,
   },
 };
+
+import { CommandPalette } from "@/components/ui/CommandPalette";
 
 export default function RootLayout({
   children,
@@ -55,6 +57,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="dark">
       <body className="bg-base text-text-primary antialiased flex flex-col min-h-screen">
         <ThemeProvider>
+          <CommandPalette />
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />

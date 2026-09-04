@@ -2,6 +2,25 @@ import { Experience } from "@/content/schemas/experience.schema";
 
 export const experiencesData: Experience[] = [
   {
+    id: "iitg-ta",
+    role: "Teaching Assistant — Introduction to Robotics",
+    organization: "Indian Institute of Technology (IIT) Guwahati",
+    location: "Guwahati, Assam, India",
+    duration: "Jul 2026 – Nov 2026",
+    period: "Jul 2026 – Nov 2026",
+    type: "academic",
+    isCurrent: false,
+    domain: "robotics",
+    summary: "Guided graduate and undergraduate engineering cohorts through rigid-body kinematics, trajectory generation, and robot dynamics.",
+    highlights: [
+      "Mentored cohorts of students through mathematical derivations of forward/inverse kinematics, Denavit-Hartenberg (DH) parameters, and Jacobian velocity control.",
+      "Facilitated lab sessions using ROS2 and robotic simulation environments for trajectory execution and collision-free obstacle avoidance.",
+      "Conducted rigorous technical evaluation and grading of algorithm assignments and term project code submissions.",
+    ],
+    technologies: ["Robotics Kinematics", "ROS2", "Python", "C++", "Simulation", "Trajectory Generation"],
+    credentialOrVerification: "Academic TA Appointment · Department of Mechanical Engineering / Center for Intelligent Cyber-Physical Systems",
+  },
+  {
     id: "iitg-mtech",
     role: "M.Tech in Robotics & Artificial Intelligence",
     organization: "Indian Institute of Technology (IIT) Guwahati",

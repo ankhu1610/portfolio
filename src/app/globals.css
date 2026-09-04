@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import "katex/dist/katex.min.css";
 
 @tailwind base;
 @tailwind components;
@@ -13,7 +14,7 @@
   --text-primary: 17 18 20; /* #111214 */
   --text-secondary: 85 87 95; /* #55575F */
   --accent: 15 156 138; /* #0F9C8A */
-  --accent-warm: 224 109 59; /* #E06D3B */
+  --accent-warm: 194 85 30; /* #C2551E (darker warm accent for WCAG AA in light mode) */
   --status-active: 15 156 138;
   --status-archived: 140 145 155;
   --font-sans: 'Inter', sans-serif;
@@ -75,4 +76,17 @@ body {
   .print-only {
     display: block !important;
   }
+}
+
+@keyframes cursor-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-cursor {
+  animation: cursor-blink 0.85s infinite cubic-bezier(1, 0, 0, 1);
 }

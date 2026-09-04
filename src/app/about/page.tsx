@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { siteConfig } from "@/content/site.config";
 import { Terminal, Cpu, ShieldCheck, CheckCircle2, ArrowRight, BookOpen, Layers } from "lucide-react";
+import { TypewriterHeading } from "@/components/ui/TypewriterHeading";
 
 export const metadata = {
   title: "About",
@@ -18,9 +19,18 @@ export default function AboutPage() {
           <span>BIOGRAPHY &amp; RESEARCH PHILOSOPHY</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-display font-bold text-text-primary tracking-tight">
-          About &amp; Research Ethos
-        </h1>
+        <TypewriterHeading
+          as="h1"
+          className="text-3xl sm:text-5xl font-display font-bold text-text-primary tracking-tight"
+          segments={[
+            { text: "About " },
+            {
+              text: "& Research Ethos",
+              className: "text-transparent bg-clip-text bg-gradient-to-r from-accent to-teal-300",
+            },
+          ]}
+          speed={32}
+        />
 
         <p className="text-base sm:text-lg text-text-secondary leading-relaxed">
           I build machine learning architectures and low-level systems from the mathematical equations up to hardware-optimized inference kernels.

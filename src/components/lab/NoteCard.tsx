@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Note } from "@/content/schemas/note.schema";
 import { TechBadge } from "@/components/ui/TechBadge";
 import { ArrowRight, BookOpen } from "lucide-react";
+import { MathFormula } from "@/components/ui/MathFormula";
 import { cn } from "@/lib/utils";
 
 interface NoteCardProps {
@@ -39,8 +40,8 @@ export function NoteCard({ note, className }: NoteCardProps) {
         </p>
 
         {note.mathOrCodeFormula && (
-          <div className="mb-4 px-2.5 py-1.5 rounded-sm bg-surface-raised border border-border-subtle text-xs font-mono text-accent-warm">
-            Formula: {note.mathOrCodeFormula}
+          <div className="mb-4 px-3 py-2 rounded-md bg-surface-raised border border-border-subtle flex items-center justify-center overflow-x-auto">
+            <MathFormula math={note.mathOrCodeFormula} />
           </div>
         )}
 

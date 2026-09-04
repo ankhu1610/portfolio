@@ -9,7 +9,22 @@ import { ChallengeCard } from "@/components/ui/ChallengeCard";
 import { SectionNav } from "@/components/project/SectionNav";
 import { ArchitectureDiagramContainer } from "@/components/project/ArchitectureDiagramContainer";
 import { ExperimentGraph } from "@/components/project/ExperimentGraph";
-import { ArrowLeft, ArrowRight, Github, ExternalLink, Code2, Cpu, CheckCircle2, AlertTriangle } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Github,
+  ExternalLink,
+  Code2,
+  Cpu,
+  CheckCircle2,
+  AlertTriangle,
+  HelpCircle,
+  FlaskConical,
+  ListTree,
+  XCircle,
+  ShieldAlert,
+  GitBranch,
+} from "lucide-react";
 import type { Metadata } from "next";
 
 export async function generateStaticParams() {
@@ -36,10 +51,18 @@ export default function ProjectCaseStudyPage({ params }: { params: { slug: strin
     { id: "problem", label: "Problem & Motivation" },
     { id: "architecture", label: "Architecture" },
     { id: "implementation", label: "Implementation" },
+    { id: "experiments", label: "Experiments & Evidence" },
+    ...(project.ablations && project.ablations.length > 0
+      ? [{ id: "ablations", label: "Component Ablations" }]
+      : []),
+    ...(project.benchmarks && project.benchmarks.length > 0
+      ? [{ id: "benchmarks", label: "Benchmarks" }]
+      : []),
+    ...(project.failedExperiments || project.limitations
+      ? [{ id: "failure", label: "Failure & Limitations" }]
+      : []),
     { id: "challenges", label: "Challenges" },
-    { id: "experiments", label: "Experiments & Benchmarks" },
-    { id: "lessons", label: "Lessons Learned" },
-    { id: "future", label: "Future Work" },
+    { id: "lessons", label: "Lessons & Future Work" },
   ];
 
   return (
@@ -51,7 +74,7 @@ export default function ProjectCaseStudyPage({ params }: { params: { slug: strin
           className="inline-flex items-center gap-1.5 hover:text-accent transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Projects</span>
+          <span>Back to Projects Repository</span>
         </Link>
 
         {project.links.github && (
@@ -62,15 +85,18 @@ export default function ProjectCaseStudyPage({ params }: { params: { slug: strin
             className="inline-flex items-center gap-1.5 text-accent hover:underline font-semibold"
           >
             <Github className="w-4 h-4" />
-            <span>GitHub Repository &rarr;</span>
+            <span>Verify Code on GitHub &rarr;</span>
           </a>
         )}
       </div>
 
       {/* Case Study Hero Section */}
-      <header className="space-y-4 max-w-4xl">
+      <header className="space-y-5 max-w-4xl">
         <div className="flex flex-wrap items-center gap-3">
-          <StatusDot status={project.status} />
+          <StatusDot
+            status={project.status}
+            verificationStatus={project.verificationStatus}
+          />
           <span className="text-xs font-mono text-text-secondary uppercase">
             Domain: {project.domain}
           </span>
@@ -88,7 +114,71 @@ export default function ProjectCaseStudyPage({ params }: { params: { slug: strin
           {project.summary}
         </p>
 
-        <div className="flex flex-wrap gap-2 pt-2">
+        {/* 2. Research Question Callout (Specification Section 2) */}
+        <div className="p-4 rounded-md bg-surface-raised border-l-4 border-accent border-y border-r border-border-subtle space-y-1.5 shadow-sm">
+          <div className="flex items-center gap-2 text-xs font-mono text-accent font-semibold uppercase tracking-wider">
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>RESEARCH QUESTION // TECHNICAL INQUIRY</span>
+          </div>
+          <p className="text-sm sm:text-base font-mono text-text-primary font-medium italic leading-relaxed">
+            &gt; &quot;{project.researchQuestion}&quot;
+          </p>
+        </div>
+
+        {/* Development Stage Tracker (Specification Section 12 for Active Projects) */}
+        {project.developmentStage && (
+          <div className="p-4 rounded-lg bg-surface border border-border-subtle space-y-3">
+            <div className="flex items-center gap-2 text-xs font-mono text-text-secondary">
+              <GitBranch className="w-3.5 h-3.5 text-accent" />
+              <span className="font-semibold uppercase tracking-wider text-text-primary">
+                RESEARCH LIFECYCLE AUDIT // HONEST PROGRESS TRACKING
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 text-xs">
+              {/* Implemented */}
+              <div className="p-3 rounded bg-surface-raised border border-border-subtle space-y-1.5">
+                <span className="text-emerald-700 dark:text-emerald-400 font-mono font-semibold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  [✓ IMPLEMENTED]
+                </span>
+                <ul className="space-y-1 text-text-secondary pl-1">
+                  {project.developmentStage.implemented.map((item, i) => (
+                    <li key={i} className="leading-relaxed">• {item}</li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* In Experiment */}
+              <div className="p-3 rounded bg-surface-raised border border-accent-warm/40 space-y-1.5">
+                <span className="text-accent-warm font-mono font-semibold flex items-center gap-1">
+                  <FlaskConical className="w-3.5 h-3.5" />
+                  [⟳ IN EXPERIMENT]
+                </span>
+                <ul className="space-y-1 text-text-secondary pl-1">
+                  {project.developmentStage.inExperiment.map((item, i) => (
+                    <li key={i} className="leading-relaxed">• {item}</li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Planned */}
+              <div className="p-3 rounded bg-surface-raised border border-border-subtle space-y-1.5">
+                <span className="text-neutral-600 dark:text-neutral-400 font-mono font-semibold flex items-center gap-1">
+                  <ListTree className="w-3.5 h-3.5" />
+                  [⏳ PLANNED]
+                </span>
+                <ul className="space-y-1 text-text-secondary pl-1">
+                  {project.developmentStage.planned.map((item, i) => (
+                    <li key={i} className="leading-relaxed">• {item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-wrap gap-2 pt-1">
           {project.technologies.map((tech) => (
             <TechBadge key={tech} label={tech} variant="filled" />
           ))}
@@ -147,48 +237,23 @@ export default function ProjectCaseStudyPage({ params }: { params: { slug: strin
             {project.architecture.description}
           </p>
 
-          {/* Interactive SVG Diagram with Zoom Lightbox */}
+          {/* Interactive SVG Diagram with Node Inspector */}
           <ArchitectureDiagramContainer
             svgPath={project.architecture.svgPath}
             caption={project.architecture.caption}
             alt={`${project.title} Architecture Diagram`}
+            components={project.architecture.components}
           />
-
-          {/* Component Breakdown Table */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-mono text-text-primary uppercase tracking-wider font-semibold">
-              Component &amp; Kernel Breakdown
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {project.architecture.components.map((comp, idx) => (
-                <div
-                  key={idx}
-                  className="p-4 rounded-md bg-surface border border-border-subtle space-y-1.5"
-                >
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-accent font-semibold">{comp.name}</span>
-                    <span className="text-text-secondary">LAYER {idx + 1}</span>
-                  </div>
-                  <div className="text-xs font-medium text-text-primary">
-                    {comp.role}
-                  </div>
-                  <p className="text-xs text-text-secondary leading-relaxed">
-                    {comp.implementationDetail}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
         </section>
 
-        {/* 3. Implementation */}
+        {/* 3. Implementation Decisions & Tradeoffs */}
         <section id="implementation" className="space-y-6 scroll-mt-28">
           <div className="border-b border-border-subtle pb-2">
             <span className="text-xs font-mono text-accent uppercase tracking-wider">
               SECTION 03
             </span>
             <h2 className="text-2xl font-display font-bold text-text-primary">
-              Implementation Decisions &amp; Tradeoffs
+              Implementation Decisions &amp; Hardware Tradeoffs
             </h2>
           </div>
 
@@ -239,44 +304,14 @@ export default function ProjectCaseStudyPage({ params }: { params: { slug: strin
           </div>
         </section>
 
-        {/* 4. Engineering Challenges */}
-        <section id="challenges" className="space-y-6 scroll-mt-28">
+        {/* 4. Experiments & Empirical Evidence */}
+        <section id="experiments" className="space-y-6 scroll-mt-28">
           <div className="border-b border-border-subtle pb-2">
             <span className="text-xs font-mono text-accent uppercase tracking-wider">
               SECTION 04
             </span>
             <h2 className="text-2xl font-display font-bold text-text-primary">
-              Engineering Bottlenecks &amp; Solutions
-            </h2>
-          </div>
-
-          <p className="text-sm text-text-secondary leading-relaxed">
-            Real systems engineering involves debugging memory fragmentation, numerical underflow, and convergence instabilities. Below are key roadblocks encountered during development:
-          </p>
-
-          <div className="space-y-4">
-            {project.challenges.map((challenge, idx) => (
-              <ChallengeCard
-                key={idx}
-                title={challenge.title}
-                problem={challenge.problem}
-                rootCause={challenge.rootCause}
-                solution={challenge.solution}
-                status={challenge.status}
-                defaultOpen={idx === 0}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* 5. Experiments & Benchmarks */}
-        <section id="experiments" className="space-y-6 scroll-mt-28">
-          <div className="border-b border-border-subtle pb-2">
-            <span className="text-xs font-mono text-accent uppercase tracking-wider">
-              SECTION 05
-            </span>
-            <h2 className="text-2xl font-display font-bold text-text-primary">
-              Experiments &amp; Quantitative Benchmarks
+              Experiments &amp; Quantitative Evidence
             </h2>
           </div>
 
@@ -297,145 +332,333 @@ export default function ProjectCaseStudyPage({ params }: { params: { slug: strin
             ))}
           </div>
 
-          {/* Interactive Benchmark Chart */}
-          {project.experiments.benchmarkData && (
-            <ExperimentGraph
-              title={`${project.title} — Throughput & Scaling Curve`}
-              data={project.experiments.benchmarkData}
-              baselineLabel="Naive PyTorch Baseline"
-              optimizedLabel="First-Principles Optimized"
-            />
-          )}
-
-          {/* Benchmarks Comparative Table */}
-          {project.benchmarks && project.benchmarks.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-sm font-mono text-text-primary uppercase tracking-wider font-semibold">
-                Reference Model Comparison
+          {/* Grounded Evidence Cards (Specification Section 3) */}
+          {project.evidence && project.evidence.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <h3 className="text-xs font-mono text-accent uppercase tracking-wider font-semibold">
+                GROUNDED EMPIRICAL EVIDENCE // CLAIMS WITH MEASUREMENT METHODOLOGY
               </h3>
-              <div className="rounded-md border border-border-subtle overflow-hidden">
-                <table className="w-full text-left text-xs font-mono">
-                  <thead className="bg-surface-raised border-b border-border-subtle text-text-secondary">
-                    <tr>
-                      <th className="p-3">Benchmark Metric</th>
-                      <th className="p-3 text-accent">Our Implementation</th>
-                      <th className="p-3">Baseline Reference</th>
-                      <th className="p-3">Relative Gain</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border-subtle bg-surface">
-                    {project.benchmarks.map((b, idx) => (
-                      <tr key={idx} className="hover:bg-surface-raised/50">
-                        <td className="p-3 font-medium text-text-primary">{b.name}</td>
-                        <td className="p-3 text-accent font-semibold">{b.ours}</td>
-                        <td className="p-3 text-text-secondary">{b.baseline}</td>
-                        <td className="p-3 font-semibold text-emerald-400">{b.speedup}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="space-y-3">
+                {project.evidence.map((ev, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-lg bg-surface border border-border-subtle space-y-2 text-xs font-mono"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-border-subtle/70 pb-2">
+                      <span className="text-text-primary font-semibold text-sm">
+                        {ev.claim}
+                      </span>
+                      <span className="text-accent font-bold text-sm sm:text-base whitespace-nowrap">
+                        {ev.value}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] text-text-secondary pt-1">
+                      <div>
+                        <strong className="text-text-primary block">Metric &amp; Baseline:</strong>
+                        <span>{ev.metric} {ev.baseline ? `(vs ${ev.baseline})` : ""}</span>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <strong className="text-text-primary block">Methodology &amp; Conditions:</strong>
+                        <span>{ev.methodology}</span>
+                        {ev.hardware && <span className="block text-accent-warm">Hardware: {ev.hardware}</span>}
+                        {ev.dataset && <span className="block text-text-secondary">Dataset: {ev.dataset}</span>}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
+
+          {/* Interactive Benchmark Chart */}
+          {project.experiments.benchmarkData && (
+            <ExperimentGraph
+              title={`${project.title} — Empirical Measurement Curve`}
+              data={project.experiments.benchmarkData}
+              baselineLabel="Reference / Naive Baseline"
+              optimizedLabel="Our Architecture (Optimized)"
+            />
+          )}
         </section>
 
-        {/* 6. Lessons Learned */}
+        {/* 5. Component Ablations (Specification Section 4) */}
+        {project.ablations && project.ablations.length > 0 && (
+          <section id="ablations" className="space-y-6 scroll-mt-28">
+            <div className="border-b border-border-subtle pb-2">
+              <span className="text-xs font-mono text-accent uppercase tracking-wider">
+                SECTION 05
+              </span>
+              <h2 className="text-2xl font-display font-bold text-text-primary">
+                Component Ablation Analysis
+              </h2>
+            </div>
+
+            <p className="text-sm text-text-secondary leading-relaxed">
+              Evaluating individual component contributions: answering &quot;Which architectural component actually produced the observed gain?&quot;
+            </p>
+
+            <div className="rounded-md border border-border-subtle overflow-hidden">
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-surface-raised border-b border-border-subtle text-text-secondary">
+                  <tr>
+                    <th className="p-3 font-semibold">Component Variant</th>
+                    <th className="p-3 font-semibold">Configuration</th>
+                    <th className="p-3 font-semibold text-accent">Observed Result</th>
+                    <th className="p-3 font-semibold hidden md:table-cell">Interpretation</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-subtle bg-surface">
+                  {project.ablations.map((ab, idx) => (
+                    <tr key={idx} className="hover:bg-surface-raised/50">
+                      <td className="p-3 font-semibold text-text-primary">{ab.name}</td>
+                      <td className="p-3 text-text-secondary">{ab.configuration}</td>
+                      <td className="p-3 text-accent font-semibold">{ab.result}</td>
+                      <td className="p-3 text-text-secondary hidden md:table-cell leading-relaxed">
+                        {ab.interpretation}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* 6. Reference Benchmarks */}
+        {project.benchmarks && project.benchmarks.length > 0 && (
+          <section id="benchmarks" className="space-y-6 scroll-mt-28">
+            <div className="border-b border-border-subtle pb-2">
+              <span className="text-xs font-mono text-accent uppercase tracking-wider">
+                SECTION 06
+              </span>
+              <h2 className="text-2xl font-display font-bold text-text-primary">
+                Reference Model Comparison &amp; Speedup
+              </h2>
+            </div>
+
+            <div className="rounded-md border border-border-subtle overflow-hidden">
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-surface-raised border-b border-border-subtle text-text-secondary">
+                  <tr>
+                    <th className="p-3">Benchmark Metric</th>
+                    <th className="p-3 text-accent">Our Implementation</th>
+                    <th className="p-3">Baseline Reference</th>
+                    <th className="p-3">Relative Gain</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-subtle bg-surface">
+                  {project.benchmarks.map((b, idx) => (
+                    <tr key={idx} className="hover:bg-surface-raised/50">
+                      <td className="p-3 font-medium text-text-primary">{b.name}</td>
+                      <td className="p-3 text-accent font-semibold">{b.ours}</td>
+                      <td className="p-3 text-text-secondary">{b.baseline}</td>
+                      <td className="p-3 font-semibold text-emerald-700 dark:text-emerald-400">{b.speedup}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* 7. Failure Analysis & Known Limitations (Specification Section 5) */}
+        {(project.failedExperiments || project.limitations) && (
+          <section id="failure" className="space-y-6 scroll-mt-28">
+            <div className="border-b border-border-subtle pb-2">
+              <span className="text-xs font-mono text-accent uppercase tracking-wider">
+                SECTION 07
+              </span>
+              <h2 className="text-2xl font-display font-bold text-text-primary">
+                Failure Analysis &amp; Known Limitations
+              </h2>
+            </div>
+
+            <p className="text-sm text-text-secondary leading-relaxed">
+              Intellectual honesty is central to the lab notebook philosophy: documenting negative results, rejected hypotheses, and precise operational boundaries.
+            </p>
+
+            {/* Negative Results & Failed Hypotheses */}
+            {project.failedExperiments && project.failedExperiments.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-xs font-mono text-accent-warm uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                  <XCircle className="w-4 h-4" />
+                  <span>NEGATIVE RESULTS // REJECTED HYPOTHESES</span>
+                </h3>
+
+                <div className="space-y-3">
+                  {project.failedExperiments.map((fe, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-lg bg-surface border border-accent-warm/30 space-y-2 text-xs font-mono"
+                    >
+                      <div className="text-text-primary font-semibold">
+                        <span className="text-accent-warm mr-1.5">[HYPOTHESIS]:</span>
+                        {fe.hypothesis}
+                      </div>
+                      <div className="text-text-primary">
+                        <span className="text-rose-600 dark:text-rose-400 mr-1.5 font-semibold">[OBSERVED FAILURE]:</span>
+                        {fe.result}
+                      </div>
+                      <div className="text-text-secondary border-t border-border-subtle/60 pt-2">
+                        <strong className="text-accent mr-1.5">[ANALYSIS]:</strong>
+                        {fe.interpretation}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Known Limitations */}
+            {project.limitations && project.limitations.length > 0 && (
+              <div className="space-y-3 pt-2">
+                <h3 className="text-xs font-mono text-text-secondary uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                  <ShieldAlert className="w-4 h-4 text-accent" />
+                  <span>SYSTEM BOUNDARIES &amp; KNOWN LIMITATIONS</span>
+                </h3>
+
+                <ul className="space-y-2 text-xs font-mono text-text-secondary pl-2 border-l-2 border-border-subtle">
+                  {project.limitations.map((lim, idx) => (
+                    <li key={idx} className="leading-relaxed">
+                      • {lim}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* 8. Engineering Bottlenecks & Solutions */}
+        <section id="challenges" className="space-y-6 scroll-mt-28">
+          <div className="border-b border-border-subtle pb-2">
+            <span className="text-xs font-mono text-accent uppercase tracking-wider">
+              SECTION 08
+            </span>
+            <h2 className="text-2xl font-display font-bold text-text-primary">
+              Engineering Bottlenecks &amp; Solutions
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {project.challenges.map((challenge, idx) => (
+              <ChallengeCard
+                key={idx}
+                title={challenge.title}
+                problem={challenge.problem}
+                rootCause={challenge.rootCause}
+                solution={challenge.solution}
+                status={challenge.status}
+                defaultOpen={idx === 0}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* 9. Lessons Learned & Future Work */}
         <section id="lessons" className="space-y-6 scroll-mt-28">
           <div className="border-b border-border-subtle pb-2">
             <span className="text-xs font-mono text-accent uppercase tracking-wider">
-              SECTION 06
+              SECTION 09
             </span>
             <h2 className="text-2xl font-display font-bold text-text-primary">
-              Lessons Learned &amp; Intellectual Honesty
+              Lessons Learned &amp; Future Research Direction
             </h2>
           </div>
 
-          <ul className="space-y-3">
-            {project.lessonsLearned.map((lesson, idx) => (
-              <li
-                key={idx}
-                className="p-4 rounded-md bg-surface border border-border-subtle text-sm text-text-secondary leading-relaxed flex items-start gap-3"
-              >
-                <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-                <span>{lesson}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-5 rounded-md bg-surface border border-border-subtle space-y-3">
+              <h3 className="text-sm font-mono text-accent uppercase tracking-wider font-semibold">
+                What Would Be Done Differently
+              </h3>
+              <ul className="space-y-2 text-xs sm:text-sm text-text-secondary leading-relaxed">
+                {project.lessonsLearned.map((lesson, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-accent font-mono mt-0.5">•</span>
+                    <span>{lesson}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="p-5 rounded-md bg-surface border border-border-subtle space-y-3">
+              <h3 className="text-sm font-mono text-accent-warm uppercase tracking-wider font-semibold">
+                Future Systems Work
+              </h3>
+              <ul className="space-y-2 text-xs sm:text-sm text-text-secondary leading-relaxed">
+                {project.futureImprovements.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-accent-warm font-mono mt-0.5">•</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </section>
 
-        {/* 7. Future Improvements */}
-        <section id="future" className="space-y-6 scroll-mt-28">
-          <div className="border-b border-border-subtle pb-2">
-            <span className="text-xs font-mono text-accent uppercase tracking-wider">
-              SECTION 07
+        {/* Cross-Artifact Navigation Links (Specification Section 15) */}
+        <div className="p-6 rounded-lg bg-surface border border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono">
+          <div>
+            <span className="text-accent font-semibold block uppercase">
+              EXPLORE RELEVANT LAB ARTIFACTS
             </span>
-            <h2 className="text-2xl font-display font-bold text-text-primary">
-              Future Roadmap &amp; Next Iterations
-            </h2>
+            <span className="text-text-secondary">
+              Investigate low-level benchmark logs and empirical derivations connected to {project.title}.
+            </span>
           </div>
 
-          <ul className="space-y-3">
-            {project.futureImprovements.map((item, idx) => (
-              <li
-                key={idx}
-                className="p-4 rounded-md bg-surface border border-border-subtle text-sm text-text-secondary leading-relaxed flex items-start gap-3"
-              >
-                <Cpu className="w-4 h-4 text-accent-warm flex-shrink-0 mt-0.5" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/lab/benchmarks"
+              className="px-3 py-1.5 rounded bg-surface-raised hover:bg-surface border border-border-subtle hover:border-accent text-text-primary transition-colors flex items-center gap-1"
+            >
+              <span>Benchmark Suite &rarr;</span>
+            </Link>
+            <Link
+              href="/lab/experiments"
+              className="px-3 py-1.5 rounded bg-surface-raised hover:bg-surface border border-border-subtle hover:border-accent-warm text-text-primary transition-colors flex items-center gap-1"
+            >
+              <span>Experiment Logs &rarr;</span>
+            </Link>
+          </div>
+        </div>
 
-      {/* Prev / Next Project Navigation (Phase 3.4) */}
-      <nav className="pt-8 border-t border-border-subtle flex items-center justify-between gap-4 text-xs font-mono">
-        {prev ? (
-          <Link
-            href={`/projects/${prev.slug}`}
-            className="p-3 rounded-md bg-surface border border-border-subtle hover:border-accent flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors max-w-[45%]"
-          >
-            <ArrowLeft className="w-4 h-4 text-accent flex-shrink-0" />
-            <div className="text-left truncate">
-              <span className="text-[10px] text-text-secondary block">PREVIOUS</span>
-              <span className="text-text-primary font-medium truncate block">{prev.title}</span>
-            </div>
-          </Link>
-        ) : <div />}
+        {/* Adjacent Project Navigation Footer */}
+        <div className="pt-8 border-t border-border-subtle grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {prev ? (
+            <Link
+              href={`/projects/${prev.slug}`}
+              className="p-4 rounded-md bg-surface border border-border-subtle hover:border-accent transition-colors space-y-1 text-left"
+            >
+              <div className="text-xs font-mono text-text-secondary flex items-center gap-1">
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>PREVIOUS PROJECT</span>
+              </div>
+              <div className="text-sm font-semibold text-text-primary line-clamp-1">
+                {prev.title}
+              </div>
+            </Link>
+          ) : (
+            <div />
+          )}
 
-        {next ? (
-          <Link
-            href={`/projects/${next.slug}`}
-            className="p-3 rounded-md bg-surface border border-border-subtle hover:border-accent flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors max-w-[45%]"
-          >
-            <div className="text-right truncate">
-              <span className="text-[10px] text-text-secondary block">NEXT</span>
-              <span className="text-text-primary font-medium truncate block">{next.title}</span>
-            </div>
-            <ArrowRight className="w-4 h-4 text-accent flex-shrink-0" />
-          </Link>
-        ) : <div />}
-      </nav>
-
-      {/* Mobile Sticky Bottom Action Bar (Phase 3.3) */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-30 p-3 bg-base/95 backdrop-blur-md border-t border-border-subtle flex items-center justify-between gap-3 shadow-lg">
-        <Link
-          href="/projects"
-          className="flex-1 py-2.5 px-4 rounded-md bg-surface border border-border-subtle text-xs font-mono text-center text-text-primary"
-        >
-          &larr; Projects
-        </Link>
-        {project.links.github && (
-          <a
-            href={project.links.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 py-2.5 px-4 rounded-md bg-accent text-neutral-950 font-mono text-xs font-semibold text-center flex items-center justify-center gap-1.5"
-          >
-            <Github className="w-3.5 h-3.5" />
-            <span>GitHub &rarr;</span>
-          </a>
-        )}
+          {next && (
+            <Link
+              href={`/projects/${next.slug}`}
+              className="p-4 rounded-md bg-surface border border-border-subtle hover:border-accent transition-colors space-y-1 text-right sm:col-start-2"
+            >
+              <div className="text-xs font-mono text-text-secondary flex items-center justify-end gap-1">
+                <span>NEXT PROJECT</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </div>
+              <div className="text-sm font-semibold text-text-primary line-clamp-1">
+                {next.title}
+              </div>
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );

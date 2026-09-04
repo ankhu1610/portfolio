@@ -2,6 +2,7 @@ import React from "react";
 import { getAllExperiences } from "@/lib/content-api";
 import { Timeline } from "@/components/ui/Timeline";
 import { Terminal, ShieldCheck, Cpu, Download } from "lucide-react";
+import { TypewriterHeading } from "@/components/ui/TypewriterHeading";
 import Link from "next/link";
 
 export const metadata = {
@@ -21,9 +22,18 @@ export default function ExperiencePage() {
           <span>CAREER TIMELINE &amp; VERIFIED CREDENTIALS</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-display font-bold text-text-primary tracking-tight">
-          Experience &amp; Education
-        </h1>
+        <TypewriterHeading
+          as="h1"
+          className="text-3xl sm:text-5xl font-display font-bold text-text-primary tracking-tight"
+          segments={[
+            { text: "Experience " },
+            {
+              text: "& Education",
+              className: "text-transparent bg-clip-text bg-gradient-to-r from-accent to-teal-300",
+            },
+          ]}
+          speed={32}
+        />
 
         <p className="text-base sm:text-lg text-text-secondary leading-relaxed">
           Chronological record of academic research, systems engineering positions, and enterprise security roles.

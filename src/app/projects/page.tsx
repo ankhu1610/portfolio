@@ -6,6 +6,7 @@ import { ProjectCard } from "@/components/project/ProjectCard";
 import { TechBadge } from "@/components/ui/TechBadge";
 import { TAXONOMY } from "@/content/_taxonomy";
 import { Terminal, Filter } from "lucide-react";
+import { TypewriterHeading } from "@/components/ui/TypewriterHeading";
 
 export default function ProjectsPage() {
   const allProjects = getAllProjects();
@@ -15,7 +16,8 @@ export default function ProjectsPage() {
     { key: "all", label: "All Projects" },
     { key: "llm", label: "LLMs & Transformers" },
     { key: "diffusion", label: "Diffusion Models" },
-    { key: "systems", label: "Systems & Infra" },
+    { key: "systems", label: "Systems & Evaluation" },
+    { key: "rec-sys", label: "Sequential RecSys" },
     { key: "security", label: "Cybersecurity & IAM" },
   ];
 
@@ -33,9 +35,18 @@ export default function ProjectsPage() {
           <span>PROJECT REPOSITORY // FIRST-PRINCIPLES SYSTEMS</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-display font-bold text-text-primary tracking-tight">
-          Systems &amp; Architectures
-        </h1>
+        <TypewriterHeading
+          as="h1"
+          className="text-3xl sm:text-5xl font-display font-bold text-text-primary tracking-tight"
+          segments={[
+            { text: "Systems " },
+            {
+              text: "& Architectures",
+              className: "text-transparent bg-clip-text bg-gradient-to-r from-accent to-teal-300",
+            },
+          ]}
+          speed={32}
+        />
 
         <p className="text-base sm:text-lg text-text-secondary leading-relaxed">
           Complete end-to-end architectures implemented from the raw mathematical equations and low-level kernels. Every project contains an architecture diagram, engineering bottlenecks, and real benchmark numbers.

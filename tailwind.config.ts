@@ -10,8 +10,10 @@ const config: Config = {
   darkMode: "class",
   theme: {
     extend: {
-      colors: {
+      backgroundColor: {
         base: "rgb(var(--bg-base) / <alpha-value>)",
+      },
+      colors: {
         surface: {
           DEFAULT: "rgb(var(--bg-surface) / <alpha-value>)",
           raised: "rgb(var(--bg-surface-raised) / <alpha-value>)",

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getNoteBySlug, getAllNotes, getProjectBySlug } from "@/lib/content-api";
 import { TechBadge } from "@/components/ui/TechBadge";
+import { MathFormula } from "@/components/ui/MathFormula";
 import { ArrowLeft, BookOpen, CheckCircle2, Terminal } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -92,8 +93,8 @@ export default function NoteDetailPage({ params }: { params: { slug: string } })
           }
           if (para.startsWith("$$") && para.endsWith("$$")) {
             return (
-              <div key={idx} className="p-4 my-3 rounded-md bg-surface border border-border-subtle text-accent font-mono text-center overflow-x-auto text-sm sm:text-base">
-                {para.replaceAll("$$", "")}
+              <div key={idx} className="p-4 my-4 rounded-md bg-surface border border-border-subtle text-center overflow-x-auto">
+                <MathFormula math={para.replaceAll("$$", "").trim()} displayMode={true} />
               </div>
             );
           }

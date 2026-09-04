@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="100%" height="100%" fill="none" class="architecture-svg">
+  <defs>
+    <linearGradient id="ns-grad-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5EEAD4" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#5EEAD4" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="ns-grad-warm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5A97F" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#F5A97F" stop-opacity="0.03"/>
+    </linearGradient>
+    <marker id="ns-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#5EEAD4"/>
+    </marker>
+    <marker id="ns-arrow-warm" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#F5A97F"/>
+    </marker>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="960" height="520" rx="12" fill="#131417" stroke="#26282D" stroke-width="1.5"/>
+
+  <!-- Title / Spec Header -->
+  <text x="32" y="40" fill="#EDEDEF" font-family="monospace" font-size="14" font-weight="600" letter-spacing="1">SYSTEM: NEXTSENSE SEQUENTIAL RECOMMENDATION PIPELINE</text>
+  <text x="680" y="40" fill="#F5A97F" font-family="monospace" font-size="12">STATUS: IN EXPERIMENT // SASREC BACKBONE</text>
+
+  <!-- Stage 1: Interaction Ingestion & Sessionization -->
+  <g transform="translate(36, 75)" id="ingestion-node">
+    <rect width="180" height="150" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="14" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">STAGE 01 // INGESTION</text>
+    <text x="14" y="46" fill="#EDEDEF" font-family="sans-serif" font-size="13" font-weight="600">Clickstream Stream</text>
+    
+    <rect x="14" y="60" width="152" height="26" rx="4" fill="#131417" stroke="#26282D" stroke-width="1"/>
+    <text x="22" y="77" fill="#9A9CA3" font-family="monospace" font-size="10">[i_1, i_2, i_3, ... i_t]</text>
+
+    <text x="14" y="110" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">Session window: L=50</text>
+    <text x="14" y="128" fill="#5EEAD4" font-family="monospace" font-size="10">Polars Vectorized Collation</text>
+  </g>
+
+  <!-- Arrow to Embedding -->
+  <path d="M 216 150 L 256 150" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#ns-arrow)"/>
+
+  <!-- Stage 2: Item Embedding + Positional Layer -->
+  <g transform="translate(260, 75)" id="embedding-node">
+    <rect width="180" height="150" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="14" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">STAGE 02 // EMBEDDINGS</text>
+    <text x="14" y="46" fill="#EDEDEF" font-family="sans-serif" font-size="13" font-weight="600">Item &amp; Position Table</text>
+    
+    <rect x="14" y="60" width="152" height="26" rx="4" fill="#131417" stroke="#26282D" stroke-width="1"/>
+    <text x="22" y="77" fill="#5EEAD4" font-family="monospace" font-size="10">E_item + P_pos</text>
+
+    <text x="14" y="110" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">Catalog: 50,000 items</text>
+    <text x="14" y="128" fill="#9A9CA3" font-family="monospace" font-size="10">d_model = 128 / FP32</text>
+  </g>
+
+  <!-- Arrow to Encoder -->
+  <path d="M 440 150 L 480 150" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#ns-arrow)"/>
+
+  <!-- Stage 3: Causal Transformer Encoder (SASRec) -->
+  <g transform="translate(484, 65)" id="transformer-node">
+    <rect width="230" height="170" rx="10" fill="url(#ns-grad-accent)" stroke="#5EEAD4" stroke-width="1.5"/>
+    <text x="16" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">STAGE 03 // SASREC ENCODER</text>
+    <text x="16" y="46" fill="#EDEDEF" font-family="sans-serif" font-size="13" font-weight="600">Causal Self-Attention</text>
+
+    <rect x="16" y="60" width="198" height="34" rx="4" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+    <text x="24" y="81" fill="#5EEAD4" font-family="monospace" font-size="10.5">Lower-Triangular Masking</text>
+
+    <text x="16" y="114" fill="#9A9CA3" font-family="sans-serif" font-size="11">4 Attention Heads · 2 Layers</text>
+    <text x="16" y="132" fill="#EDEDEF" font-family="monospace" font-size="10.5">h_t = Dynamic User State</text>
+    <text x="16" y="150" fill="#F5A97F" font-family="monospace" font-size="10">MRR@10: 0.184 vs GRU 0.151</text>
+  </g>
+
+  <!-- Arrow to Ranking -->
+  <path d="M 714 150 L 754 150" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#ns-arrow)"/>
+
+  <!-- Stage 4: Candidate Scoring & Loss -->
+  <g transform="translate(758, 75)" id="projection-node">
+    <rect width="166" height="150" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="14" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">STAGE 04 // RANKING</text>
+    <text x="14" y="46" fill="#EDEDEF" font-family="sans-serif" font-size="13" font-weight="600">Score Matrix</text>
+
+    <rect x="14" y="60" width="138" height="26" rx="4" fill="#131417" stroke="#26282D" stroke-width="1"/>
+    <text x="20" y="77" fill="#5EEAD4" font-family="monospace" font-size="10">r_i = (h_t)^T * e_i</text>
+
+    <text x="14" y="110" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">In-batch Negative Loss</text>
+    <text x="14" y="128" fill="#5EEAD4" font-family="monospace" font-size="10">Recall@10: 34.2%</text>
+  </g>
+
+  <!-- Downward Arrow to Stage 5: Development & Planned ANN Layer -->
+  <path d="M 841 225 L 841 275 L 750 275" stroke="#F5A97F" stroke-width="1.5" marker-end="url(#ns-arrow-warm)"/>
+
+  <!-- Development Roadmap Strip -->
+  <g transform="translate(36, 275)">
+    <rect width="888" height="145" rx="10" fill="url(#ns-grad-warm)" stroke="#F5A97F" stroke-width="1.5"/>
+    <text x="20" y="26" fill="#F5A97F" font-family="monospace" font-size="11" font-weight="600">LIFECYCLE VERIFICATION: IMPLEMENTED // IN EXPERIMENT // PLANNED</text>
+
+    <g transform="translate(20, 42)">
+      <!-- Implemented -->
+      <rect width="265" height="85" rx="6" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+      <text x="12" y="20" fill="#5EEAD4" font-family="monospace" font-size="10.5" font-weight="600">[✓ IMPLEMENTED]</text>
+      <text x="12" y="38" fill="#EDEDEF" font-family="sans-serif" font-size="11">• Session trajectory collation</text>
+      <text x="12" y="56" fill="#EDEDEF" font-family="sans-serif" font-size="11">• GRU4Rec recurrent baseline</text>
+      <text x="12" y="74" fill="#EDEDEF" font-family="sans-serif" font-size="11">• Temporal holdout evaluator</text>
+    </g>
+
+    <g transform="translate(305, 42)">
+      <!-- In Experiment -->
+      <rect width="265" height="85" rx="6" fill="#1B1D21" stroke="#F5A97F" stroke-width="1.5"/>
+      <text x="12" y="20" fill="#F5A97F" font-family="monospace" font-size="10.5" font-weight="600">[⟳ IN EXPERIMENT]</text>
+      <text x="12" y="38" fill="#EDEDEF" font-family="sans-serif" font-size="11">• SASRec causal self-attention</text>
+      <text x="12" y="56" fill="#EDEDEF" font-family="sans-serif" font-size="11">• InfoNCE contrastive tuning</text>
+      <text x="12" y="74" fill="#EDEDEF" font-family="sans-serif" font-size="11">• L=50 sequence truncation</text>
+    </g>
+
+    <g transform="translate(590, 42)">
+      <!-- Planned -->
+      <rect width="278" height="85" rx="6" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+      <text x="12" y="20" fill="#9A9CA3" font-family="monospace" font-size="10.5" font-weight="600">[⏳ PLANNED]</text>
+      <text x="12" y="38" fill="#9A9CA3" font-family="sans-serif" font-size="11">• HNSW / ScaNN ANN retrieval index</text>
+      <text x="12" y="56" fill="#9A9CA3" font-family="sans-serif" font-size="11">• Multi-task catalog metadata ranking</text>
+      <text x="12" y="74" fill="#9A9CA3" font-family="sans-serif" font-size="11">• Multi-session trajectory NDCG@K</text>
+    </g>
+  </g>
+
+  <!-- Summary Footer Strip -->
+  <g transform="translate(36, 440)">
+    <rect width="888" height="50" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+    <text x="24" y="30" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">EMPIRICAL DELTA:</text>
+    <text x="190" y="30" fill="#EDEDEF" font-family="monospace" font-size="11">Recall@10: 34.2% (+131% vs BPR-MF)</text>
+    <text x="510" y="30" fill="#EDEDEF" font-family="monospace" font-size="11">MRR@10: 0.184 (vs 0.151 GRU4Rec)</text>
+    <text x="760" y="30" fill="#F5A97F" font-family="monospace" font-size="11">Status: Active Exploration</text>
+  </g>
+</svg>

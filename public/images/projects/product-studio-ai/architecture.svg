@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="100%" height="100%" fill="none" class="architecture-svg">
+  <defs>
+    <linearGradient id="ps-grad-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5EEAD4" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#5EEAD4" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="ps-grad-warm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5A97F" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#F5A97F" stop-opacity="0.03"/>
+    </linearGradient>
+    <marker id="ps-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#5EEAD4"/>
+    </marker>
+    <marker id="ps-arrow-warm" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#F5A97F"/>
+    </marker>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="960" height="520" rx="12" fill="#131417" stroke="#26282D" stroke-width="1.5"/>
+
+  <!-- Title / Spec Header -->
+  <text x="32" y="40" fill="#EDEDEF" font-family="monospace" font-size="14" font-weight="600" letter-spacing="1">SYSTEM: PRODUCTSTUDIO DYNAMIC LORA HOT-SWAPPING</text>
+  <text x="690" y="40" fill="#5EEAD4" font-family="monospace" font-size="12">STATUS: SHIPPED // 85MS ADAPTER SWAP</text>
+
+  <!-- Host RAM / Pinned Memory Region -->
+  <g transform="translate(36, 75)" id="lora-registry-node">
+    <rect width="260" height="340" rx="10" fill="url(#ps-grad-warm)" stroke="#F5A97F" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="16" y="26" fill="#F5A97F" font-family="monospace" font-size="11" font-weight="600">HOST RAM // PINNED MEMORY REGISTRY</text>
+    
+    <!-- Tenant Adapter Cards -->
+    <g transform="translate(16, 40)">
+      <rect width="228" height="52" rx="6" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+      <text x="12" y="24" fill="#EDEDEF" font-family="sans-serif" font-size="12" font-weight="600">Tenant_A (Brand Style 1)</text>
+      <text x="12" y="40" fill="#9A9CA3" font-family="monospace" font-size="10">Rank-16 LoRA · 12.4 MB · Pinned</text>
+    </g>
+
+    <g transform="translate(16, 102)">
+      <rect width="228" height="52" rx="6" fill="#1B1D21" stroke="#F5A97F" stroke-width="1.5"/>
+      <text x="12" y="24" fill="#F5A97F" font-family="sans-serif" font-size="12" font-weight="600">Tenant_B (Active Swap) ★</text>
+      <text x="12" y="40" fill="#EDEDEF" font-family="monospace" font-size="10">Streaming DMA Transfer (24ms)</text>
+    </g>
+
+    <g transform="translate(16, 164)">
+      <rect width="228" height="52" rx="6" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+      <text x="12" y="24" fill="#EDEDEF" font-family="sans-serif" font-size="12" font-weight="600">Tenant_C (Cosmetics Studio)</text>
+      <text x="12" y="40" fill="#9A9CA3" font-family="monospace" font-size="10">Rank-16 LoRA · 12.4 MB · Pinned</text>
+    </g>
+
+    <g transform="translate(16, 226)">
+      <rect width="228" height="52" rx="6" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+      <text x="12" y="24" fill="#EDEDEF" font-family="sans-serif" font-size="12" font-weight="600">Tenant_D ... Tenant_N</text>
+      <text x="12" y="40" fill="#9A9CA3" font-family="monospace" font-size="10">200+ Cached Adapters in 3.2GB RAM</text>
+    </g>
+
+    <text x="16" y="318" fill="#9A9CA3" font-family="monospace" font-size="10">Zero VRAM Footprint until Swap</text>
+  </g>
+
+  <!-- PCI-e Bus Arrow -->
+  <path d="M 296 245 L 350 245" stroke="#F5A97F" stroke-width="2" marker-end="url(#ps-arrow-warm)"/>
+  <text x="296" y="235" fill="#F5A97F" font-family="monospace" font-size="10">PCI-e Gen4 x16</text>
+
+  <!-- Device GPU VRAM Region -->
+  <g transform="translate(360, 75)">
+    <rect width="564" height="340" rx="10" fill="url(#ps-grad-accent)" stroke="#5EEAD4" stroke-width="1.5"/>
+    <text x="20" y="26" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">GPU VRAM // SHARED BACKBONE (NVIDIA RTX 4090)</text>
+
+    <!-- Fused Kernel Box -->
+    <g transform="translate(20, 45)" id="delta-kernel-node">
+      <rect width="240" height="120" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+      <text x="14" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">FUSED DELTA KERNEL</text>
+      <text x="14" y="48" fill="#EDEDEF" font-family="mono" font-size="11">W_eff = W_base + (B @ A)*scale</text>
+      <text x="14" y="74" fill="#9A9CA3" font-family="sans-serif" font-size="11">In-place linear weight mutation</text>
+      <text x="14" y="98" fill="#5EEAD4" font-family="monospace" font-size="10.5">Execution Latency: 85 ms</text>
+    </g>
+
+    <!-- Base UNet Model -->
+    <g transform="translate(280, 45)" id="vram-pinner-node">
+      <rect width="260" height="120" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+      <text x="14" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">BASE UNET BACKBONE (PINNED)</text>
+      <text x="14" y="48" fill="#EDEDEF" font-family="sans-serif" font-size="12">Stable Diffusion 1.5 FP16</text>
+      <text x="14" y="74" fill="#9A9CA3" font-family="monospace" font-size="10.5">16 Cross-Attention Blocks</text>
+      <text x="14" y="98" fill="#EDEDEF" font-family="monospace" font-size="10.5">Fixed VRAM: 3.4 GB (Zero Growth)</text>
+    </g>
+
+    <!-- Accelerated DDIM Sampling Pipeline -->
+    <g transform="translate(20, 185)" id="ddim-sampler-node">
+      <rect width="520" height="135" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+      <text x="16" y="25" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">ACCELERATED DDIM INFERENCE (15 STEPS)</text>
+      
+      <!-- Step boxes -->
+      <g transform="translate(16, 40)">
+        <rect width="90" height="45" rx="4" fill="#131417" stroke="#26282D" stroke-width="1"/>
+        <text x="10" y="20" fill="#9A9CA3" font-family="monospace" font-size="10">t=999</text>
+        <text x="10" y="36" fill="#EDEDEF" font-family="monospace" font-size="10">Latent z_T</text>
+      </g>
+      <path d="M 110 62 L 126 62" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#ps-arrow)"/>
+
+      <g transform="translate(132, 40)">
+        <rect width="110" height="45" rx="4" fill="#131417" stroke="#5EEAD4" stroke-width="1"/>
+        <text x="10" y="20" fill="#5EEAD4" font-family="monospace" font-size="10">15 ODE Steps</text>
+        <text x="10" y="36" fill="#EDEDEF" font-family="monospace" font-size="10">Step Skip Sched</text>
+      </g>
+      <path d="M 246 62 L 262 62" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#ps-arrow)"/>
+
+      <g transform="translate(268, 40)">
+        <rect width="110" height="45" rx="4" fill="#131417" stroke="#26282D" stroke-width="1"/>
+        <text x="10" y="20" fill="#9A9CA3" font-family="monospace" font-size="10">Autoencoder KL</text>
+        <text x="10" y="36" fill="#EDEDEF" font-family="monospace" font-size="10">Tiled Decoder</text>
+      </g>
+      <path d="M 382 62 L 398 62" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#ps-arrow)"/>
+
+      <g transform="translate(404, 40)">
+        <rect width="100" height="45" rx="4" fill="#131417" stroke="#F5A97F" stroke-width="1"/>
+        <text x="8" y="20" fill="#F5A97F" font-family="monospace" font-size="10">p50 Latency</text>
+        <text x="8" y="36" fill="#EDEDEF" font-family="monospace" font-size="11" font-weight="600">1.68s Output</text>
+      </g>
+
+      <text x="16" y="115" fill="#9A9CA3" font-family="monospace" font-size="10.5">High Edge-Preservation FID Parity with 50-step baseline</text>
+    </g>
+  </g>
+
+  <!-- Summary Footer Strip -->
+  <g transform="translate(36, 440)">
+    <rect width="888" height="50" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+    <text x="24" y="30" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">BENCHMARK SUMMARY:</text>
+    <text x="210" y="30" fill="#EDEDEF" font-family="monospace" font-size="11">Switching Latency: 85ms (-97.4%)</text>
+    <text x="490" y="30" fill="#EDEDEF" font-family="monospace" font-size="11">p50 Rerender: 1.68s</text>
+    <text x="700" y="30" fill="#5EEAD4" font-family="monospace" font-size="11">VRAM Footprint: 3.8 GB Fixed</text>
+  </g>
+</svg>

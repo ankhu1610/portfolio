@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 
-interface DataPoint {
+export interface DataPoint {
   xLabel: string;
   baseline: number;
   optimized: number;
   unit?: string;
+  notes?: string;
 }
 
 interface ExperimentGraphProps {
@@ -16,6 +17,7 @@ interface ExperimentGraphProps {
   baselineLabel?: string;
   optimizedLabel?: string;
   unit?: string;
+  lowerIsBetter?: boolean;
   className?: string;
 }
 
@@ -25,6 +27,7 @@ export function ExperimentGraph({
   baselineLabel = "Standard / Baseline",
   optimizedLabel = "Our Implementation (Optimized)",
   unit = "tokens/s",
+  lowerIsBetter = false,
   className,
 }: ExperimentGraphProps) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
@@ -34,11 +37,11 @@ export function ExperimentGraph({
   const maxValue = Math.max(...allValues, 1);
 
   return (
-    <div className={cn("p-5 rounded-lg bg-surface border border-border-subtle my-6", className)}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+    <div className={cn("p-5 rounded-lg bg-surface border border-border-subtle my-6 space-y-4", className)}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border-subtle pb-3">
         <div>
-          <span className="text-xs font-mono text-accent uppercase tracking-wider block mb-1">
-            BENCHMARK LOG
+          <span className="text-[11px] font-mono text-accent uppercase tracking-wider block mb-0.5 font-semibold">
+            EMPIRICAL BENCHMARK // REPRODUCIBLE LOG
           </span>
           <h4 className="text-sm font-semibold text-text-primary">{title}</h4>
         </div>
@@ -57,51 +60,64 @@ export function ExperimentGraph({
       </div>
 
       {/* Bar Chart Container */}
-      <div className="space-y-4 pt-2">
+      <div className="space-y-4 pt-1">
         {data.map((item, idx) => {
           const baselinePercent = (item.baseline / maxValue) * 100;
           const optimizedPercent = (item.optimized / maxValue) * 100;
-          const speedupRatio = (item.optimized / (item.baseline || 1)).toFixed(1);
+          const isHovered = hoveredIdx === idx;
+
+          let deltaBadge = "";
+          if (lowerIsBetter) {
+            const reduction = (((item.baseline - item.optimized) / (item.baseline || 1)) * 100).toFixed(1);
+            deltaBadge = `-${reduction}% reduction`;
+          } else {
+            const speedupRatio = (item.optimized / (item.baseline || 1)).toFixed(1);
+            deltaBadge = `+${speedupRatio}x speedup`;
+          }
 
           return (
             <div
               key={idx}
-              className="space-y-1.5 text-xs font-mono"
+              className={cn(
+                "space-y-1.5 text-xs font-mono p-2 rounded transition-colors",
+                isHovered ? "bg-surface-raised" : "bg-transparent"
+              )}
               onMouseEnter={() => setHoveredIdx(idx)}
               onMouseLeave={() => setHoveredIdx(null)}
             >
               <div className="flex items-center justify-between text-text-secondary">
-                <span className="font-medium text-text-primary">{item.xLabel}</span>
-                <span className="text-accent">
-                  +{speedupRatio}x speedup ({item.optimized} vs {item.baseline} {item.unit || unit})
+                <span className="font-semibold text-text-primary">{item.xLabel}</span>
+                <span className="text-accent font-medium">
+                  {deltaBadge} ({item.optimized} vs {item.baseline} {item.unit || unit})
                 </span>
               </div>
 
               <div className="space-y-1">
                 {/* Baseline Bar */}
-                <div className="h-3.5 w-full bg-surface-raised rounded-sm overflow-hidden flex">
+                <div className="h-3.5 w-full bg-surface-raised rounded-sm overflow-hidden flex" title={`${baselineLabel}: ${item.baseline} ${item.unit || unit}`}>
                   <div
-                    style={{ width: `${baselinePercent}%` }}
+                    style={{ width: `${Math.min(baselinePercent, 100)}%` }}
                     className="h-full bg-neutral-600 transition-all duration-300 rounded-sm"
                   />
                 </div>
 
                 {/* Optimized Bar */}
-                <div className="h-4 w-full bg-surface-raised rounded-sm overflow-hidden flex">
+                <div className="h-4 w-full bg-surface-raised rounded-sm overflow-hidden flex" title={`${optimizedLabel}: ${item.optimized} ${item.unit || unit}`}>
                   <div
-                    style={{ width: `${optimizedPercent}%` }}
-                    className="h-full bg-accent transition-all duration-300 rounded-sm shadow-[0_0_8px_rgba(94,234,212,0.3)]"
+                    style={{ width: `${Math.min(optimizedPercent, 100)}%` }}
+                    className="h-full bg-accent transition-all duration-300 rounded-sm shadow-[0_0_8px_rgba(94,234,212,0.25)]"
                   />
                 </div>
               </div>
+
+              {item.notes && (
+                <div className="text-[11px] text-text-secondary pt-0.5">
+                  &gt; {item.notes}
+                </div>
+              )}
             </div>
           );
         })}
-      </div>
-
-      <div className="mt-5 pt-3 border-t border-border-subtle/60 flex items-center justify-between text-[11px] font-mono text-text-secondary">
-        <span>Hardware: NVIDIA RTX 4090 · CUDA 12.4 · PyTorch 2.4</span>
-        <span className="text-accent">Normalized Throughput Metric</span>
       </div>
     </div>
   );

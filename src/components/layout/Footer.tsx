@@ -5,7 +5,7 @@ import { Github, Linkedin, Mail, FileText, Terminal } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="mt-20 border-t border-border-subtle bg-surface/40">
+    <footer className="mt-20 border-t border-border-subtle bg-surface/40 print:hidden">
       <div className="max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           {/* Col 1: Brand & Positioning */}
@@ -61,7 +61,7 @@ export function Footer() {
                   className="flex items-center gap-2 hover:text-accent transition-colors"
                 >
                   <Github className="w-3.5 h-3.5" />
-                  <span>GitHub (@ankitchaubey)</span>
+                  <span>GitHub (@ankhu1610)</span>
                 </a>
               </li>
               <li>

@@ -18,7 +18,7 @@ export const siteConfig = {
     prevRole: "Technology Analyst, Cybersecurity @ Fiserv (2024–2025)",
   },
   links: {
-    github: "https://github.com/ankitchaubey",
+    github: "https://github.com/ankhu1610",
     linkedin: "https://www.linkedin.com/in/ankit-chaubey-6b9a141b2/",
     email: "mailto:chaubeyankit837@gmail.com",
     academicEmail: "mailto:ankit.chaubey@iitg.ac.in",

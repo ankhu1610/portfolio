@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="100%" height="100%" fill="none" class="architecture-svg">
+  <defs>
+    <linearGradient id="hl-grad-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5EEAD4" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#5EEAD4" stop-opacity="0.02"/>
+    </linearGradient>
+    <linearGradient id="hl-grad-warm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5A97F" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#F5A97F" stop-opacity="0.03"/>
+    </linearGradient>
+    <marker id="hl-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#5EEAD4"/>
+    </marker>
+    <marker id="hl-arrow-warm" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#F5A97F"/>
+    </marker>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="960" height="520" rx="12" fill="#131417" stroke="#26282D" stroke-width="1.5"/>
+
+  <!-- Title / Spec Header -->
+  <text x="32" y="40" fill="#EDEDEF" font-family="monospace" font-size="14" font-weight="600" letter-spacing="1">RESEARCH: HINGLISHLM TOKENIZATION &amp; ADAPTATION TRACK</text>
+  <text x="710" y="40" fill="#F5A97F" font-family="monospace" font-size="12">TRACK: RESEARCH IN PROGRESS</text>
+
+  <!-- Stage 1: Hinglish Corpus & Script Normalization -->
+  <g transform="translate(36, 75)" id="normalizer-node">
+    <rect width="180" height="150" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="14" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">STAGE 01 // CORPUS</text>
+    <text x="14" y="46" fill="#EDEDEF" font-family="sans-serif" font-size="13" font-weight="600">Code-Mixed Input</text>
+    
+    <rect x="14" y="60" width="152" height="26" rx="4" fill="#131417" stroke="#26282D" stroke-width="1"/>
+    <text x="20" y="77" fill="#F5A97F" font-family="monospace" font-size="9.5">&quot;kal meeting karenge&quot;</text>
+
+    <text x="14" y="110" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">Phonetic Soundex Normalizer</text>
+    <text x="14" y="128" fill="#5EEAD4" font-family="monospace" font-size="10">250MB Colloquial Corpus</text>
+  </g>
+
+  <!-- Arrow to Profiler -->
+  <path d="M 216 150 L 256 150" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#hl-arrow)"/>
+
+  <!-- Stage 2: Tokenizer Fragmentation Profiler -->
+  <g transform="translate(260, 65)" id="profiler-node">
+    <rect width="210" height="170" rx="10" fill="url(#hl-grad-warm)" stroke="#F5A97F" stroke-width="1.5"/>
+    <text x="16" y="24" fill="#F5A97F" font-family="monospace" font-size="11" font-weight="600">STAGE 02 // FERTILITY PROFILE</text>
+    <text x="16" y="46" fill="#EDEDEF" font-family="sans-serif" font-size="13" font-weight="600">Subword Fragmentation</text>
+
+    <rect x="16" y="60" width="178" height="42" rx="4" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+    <text x="24" y="78" fill="#EDEDEF" font-family="monospace" font-size="9.5">Llama-3: 3.12 tok/w</text>
+    <text x="24" y="94" fill="#F5A97F" font-family="monospace" font-size="9.5">Qwen-2.5: 2.84 tok/w (2.4x Eng)</text>
+
+    <text x="16" y="126" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">Diagnosing Byte-level Fallback</text>
+    <text x="16" y="146" fill="#5EEAD4" font-family="monospace" font-size="10">Extracting 4,096 Merge Rules</text>
+  </g>
+
+  <!-- Arrow to Vocab Expansion -->
+  <path d="M 470 150 L 510 150" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#hl-arrow)"/>
+
+  <!-- Stage 3: Vocabulary Expansion & Embedding Init -->
+  <g transform="translate(514, 65)" id="vocab-expansion-node">
+    <rect width="210" height="170" rx="10" fill="url(#hl-grad-accent)" stroke="#5EEAD4" stroke-width="1.5"/>
+    <text x="16" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">STAGE 03 // VOCAB EXPANSION</text>
+    <text x="16" y="46" fill="#EDEDEF" font-family="sans-serif" font-size="13" font-weight="600">Targeted +4,096 BPE</text>
+
+    <rect x="16" y="60" width="178" height="42" rx="4" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+    <text x="24" y="78" fill="#5EEAD4" font-family="monospace" font-size="9.5">Fertility: 1.74 tok/w</text>
+    <text x="24" y="94" fill="#EDEDEF" font-family="monospace" font-size="9.5">-38.6% Sequence Inflation</text>
+
+    <text x="16" y="126" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">Constituent Mean-Pooling</text>
+    <text x="16" y="146" fill="#EDEDEF" font-family="monospace" font-size="10">Stabilized Embedding Table</text>
+  </g>
+
+  <!-- Arrow to LoRA Continued Pretraining -->
+  <path d="M 724 150 L 764 150" stroke="#5EEAD4" stroke-width="1.5" marker-end="url(#hl-arrow)"/>
+
+  <!-- Stage 4: LoRA Adaptation & Pretraining -->
+  <g transform="translate(768, 75)" id="lora-pretrain-node">
+    <rect width="156" height="150" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="14" y="24" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">STAGE 04 // PEFT</text>
+    <text x="14" y="46" fill="#EDEDEF" font-family="sans-serif" font-size="13" font-weight="600">LoRA Pretrain</text>
+
+    <rect x="14" y="60" width="128" height="26" rx="4" fill="#131417" stroke="#26282D" stroke-width="1"/>
+    <text x="20" y="77" fill="#5EEAD4" font-family="monospace" font-size="10">r=16 / alpha=32</text>
+
+    <text x="14" y="110" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">Target: Qwen2.5-1.5B</text>
+    <text x="14" y="128" fill="#F5A97F" font-family="monospace" font-size="10">Validation Loss: -0.42</text>
+  </g>
+
+  <!-- Lower Section: Evaluation & Benchmark Matrix -->
+  <g transform="translate(36, 275)">
+    <rect width="888" height="145" rx="10" fill="#1B1D21" stroke="#26282D" stroke-width="1.5"/>
+    <text x="20" y="26" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">DOWNSTREAM EVALUATION DESIGN // AVOID FABRICATED IMPROVEMENT CLAIMS</text>
+
+    <!-- Comparison Tracks -->
+    <g transform="translate(20, 42)">
+      <rect width="200" height="85" rx="6" fill="#131417" stroke="#26282D" stroke-width="1"/>
+      <text x="12" y="22" fill="#9A9CA3" font-family="monospace" font-size="10">TRACK A</text>
+      <text x="12" y="40" fill="#EDEDEF" font-family="sans-serif" font-size="12" font-weight="600">Base Qwen2.5</text>
+      <text x="12" y="60" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">Off-the-shelf zero-shot</text>
+      <text x="12" y="76" fill="#F5A97F" font-family="monospace" font-size="10">High token overhead</text>
+    </g>
+
+    <g transform="translate(235, 42)">
+      <rect width="200" height="85" rx="6" fill="#131417" stroke="#26282D" stroke-width="1"/>
+      <text x="12" y="22" fill="#9A9CA3" font-family="monospace" font-size="10">TRACK B</text>
+      <text x="12" y="40" fill="#EDEDEF" font-family="sans-serif" font-size="12" font-weight="600">Standard LoRA</text>
+      <text x="12" y="60" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">Without vocab adaptation</text>
+      <text x="12" y="76" fill="#9A9CA3" font-family="monospace" font-size="10">Same fragmentation</text>
+    </g>
+
+    <g transform="translate(450, 42)">
+      <rect width="200" height="85" rx="6" fill="#131417" stroke="#5EEAD4" stroke-width="1"/>
+      <text x="12" y="22" fill="#5EEAD4" font-family="monospace" font-size="10">TRACK C (OURS)</text>
+      <text x="12" y="40" fill="#EDEDEF" font-family="sans-serif" font-size="12" font-weight="600">+4K Vocab + Init</text>
+      <text x="12" y="60" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">Constituent mean init</text>
+      <text x="12" y="76" fill="#5EEAD4" font-family="monospace" font-size="10">38.6% fewer tokens</text>
+    </g>
+
+    <g transform="translate(665, 42)">
+      <rect width="203" height="85" rx="6" fill="#131417" stroke="#F5A97F" stroke-width="1"/>
+      <text x="12" y="22" fill="#F5A97F" font-family="monospace" font-size="10">TRACK D (ACTIVE)</text>
+      <text x="12" y="40" fill="#EDEDEF" font-family="sans-serif" font-size="12" font-weight="600">Continued Pretrain</text>
+      <text x="12" y="60" fill="#9A9CA3" font-family="sans-serif" font-size="10.5">Code-mixed corpus fine-tuning</text>
+      <text x="12" y="76" fill="#F5A97F" font-family="monospace" font-size="10">In evaluation pipeline</text>
+    </g>
+  </g>
+
+  <!-- Summary Footer Strip -->
+  <g transform="translate(36, 440)">
+    <rect width="888" height="50" rx="8" fill="#1B1D21" stroke="#26282D" stroke-width="1"/>
+    <text x="24" y="30" fill="#5EEAD4" font-family="monospace" font-size="11" font-weight="600">KEY METRICS:</text>
+    <text x="160" y="30" fill="#EDEDEF" font-family="monospace" font-size="11">Fertility: 1.74 tok/w (vs 2.84 Qwen)</text>
+    <text x="460" y="30" fill="#EDEDEF" font-family="monospace" font-size="11">Compression: +64.4% chars/token</text>
+    <text x="740" y="30" fill="#F5A97F" font-family="monospace" font-size="11">Status: Active Research</text>
+  </g>
+</svg>

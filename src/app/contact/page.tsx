@@ -114,7 +114,7 @@ export default function ContactPage() {
                 GitHub Repositories
               </span>
               <span className="text-sm font-mono font-semibold text-text-primary group-hover:text-accent transition-colors block mt-0.5">
-                @ankitchaubey
+                @ankhu1610
               </span>
             </div>
           </div>

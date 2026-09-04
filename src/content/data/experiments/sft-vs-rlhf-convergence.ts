@@ -3,7 +3,7 @@ import { Experiment } from "@/content/schemas/experiment.schema";
 export const sftVsRlhfExperiment: Experiment = {
   title: "Benchmarking SFT vs Direct Preference Optimization (DPO) Convergence Dynamics",
   slug: "sft-vs-rlhf-convergence",
-  date: "Apr 2026",
+  date: "Jul 2026",
   objective: "Quantify the gradient stability, loss convergence rate, and length-bias vulnerability of Supervised Fine-Tuning (SFT) versus Direct Preference Optimization (DPO) on a 125M parameter transformer.",
   hypothesis: "DPO without reference model implicit reward regularization will exhibit rapid policy collapse and exploit response length as a spurious proxy for preference.",
   setup: {
